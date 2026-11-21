@@ -41,4 +41,4 @@ body:
     id: date
     attributes:
       label: When did it come out?
-      placeholder: 2026-12-01
+      placeholder: "2026-12-01"
