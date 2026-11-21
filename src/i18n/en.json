@@ -47,8 +47,10 @@
   "expiredStatus": "Expired",
   "only": "only",
   "added": "Added",
-  "discordSubtitle": "Chat and code drops",
-  "githubSubtitle": "Source and issues",
+  "contributor": "contributor",
+  "contributors": "contributors",
+  "contribution": "contribution",
+  "contributions": "contributions",
   "modes": {
     "pvp": "PvP",
     "pvps": "PvP-S",
