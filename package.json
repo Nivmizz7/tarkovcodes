@@ -1,7 +1,21 @@
 {
   "name": "tarkovcodes",
+  "version": "1.0.0",
+  "description": "Escape from Tarkov promo codes with one-click copy, reward screenshots and mode filters.",
+  "private": true,
+  "license": "MIT",
+  "homepage": "https://tarkovcodes.pages.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wilsman/tarkovcodes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Wilsman/tarkovcodes/issues"
+  },
   "type": "module",
-  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

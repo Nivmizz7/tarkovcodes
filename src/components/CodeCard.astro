@@ -47,7 +47,7 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
         />
       </button>
     ) : (
-      <div class="shot empty">No screenshot yet</div>
+      <div class="shot empty">{working ? 'No screenshot yet' : 'No screenshot'}</div>
     )
   }
 
@@ -77,7 +77,7 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
         )
       }
     </span>
-    <span class:list={['tag', working ? 'ok' : 'bad']}>{working ? 'Working' : 'Not working'}</span>
+    <span class:list={['tag', working ? 'ok' : 'bad']}>{working ? 'Working' : 'Expired'}</span>
   </div>
 
   {(item.note || addedLabel) && (

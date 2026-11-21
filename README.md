@@ -1,43 +1,55 @@
-# Astro Starter Kit: Minimal
+# Tarkov Codes
+
+Escape from Tarkov promo codes in one place: click to copy, see what each code gives, and filter by the mode you play.
+
+**Live site: [tarkovcodes.pages.dev](https://tarkovcodes.pages.dev)**
+
+- One-click copy for every code
+- A screenshot of the rewards for most codes (click to enlarge)
+- "I play" picker for PvP, PvP-S (seasonal) and PvE
+- Expired codes kept at the bottom so you can see what they gave
+
+## Know a code? Found one that stopped working?
+
+[Open an issue](https://github.com/Wilsman/tarkovcodes/issues/new/choose) and pick a form:
+
+- **New code**: a code that isn't on the site yet
+- **Code expired**: a code on the site that no longer works
+- **Fix code info**: wrong mode, reward, note or screenshot
+
+A screenshot of the rewards (the "Showcase" window after you claim the gift) helps a lot. Pull requests are welcome too, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Redeeming a code
+
+1. Copy a code from the site
+2. In the launcher, click your name, then **Activate code**
+3. If it doesn't work, update or reinstall the launcher, then try again
+
+Codes are case sensitive and often expire quickly.
+
+## Running it locally
+
+Needs Node 22.12 or newer.
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # static site in dist/
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## How it's built
 
-## 🚀 Project Structure
+A static [Astro](https://astro.build) site with no framework JavaScript. The only script on the page is a small inline one for copying, the mode picker and the screenshot viewer. Reward screenshots go through Astro's image pipeline (AVIF and WebP, lazy loaded). It's hosted on Cloudflare Pages.
 
-Inside of your Astro project, you'll see the following folders and files:
+| Path | What's there |
+|---|---|
+| `src/codes.ts` | Every code: status, modes, date, note and reward screenshot |
+| `src/assets/rewards/` | Reward screenshots, one per code |
+| `src/pages/index.astro` | The page, its styles and its script |
+| `src/components/CodeCard.astro` | One code card |
+| `public/` | Favicons, link preview image (`og.png`) and Cloudflare headers |
+| `scripts/` | Python scripts that rebuild `og.png` and the favicons |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Disclaimer
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Fan site, not affiliated with or endorsed by Battlestate Games. Escape from Tarkov and its in-game imagery, including the reward screenshots, belong to Battlestate Games. The MIT license covers this project's code only.

@@ -1,0 +1,32 @@
+name: Fix code info
+description: Wrong mode, reward, note or screenshot for a code
+title: "Fix: "
+labels: ["correction"]
+body:
+  - type: input
+    id: code
+    attributes:
+      label: Code
+      placeholder: READ80LV
+    validations:
+      required: true
+  - type: dropdown
+    id: what
+    attributes:
+      label: What's wrong?
+      multiple: true
+      options:
+        - Modes (PvP / PvP-S / PvE)
+        - Reward screenshot
+        - Note
+        - Date
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What should it be?
+      description: If it's the screenshot, paste or drag in a better one of the in-game Showcase window.
+    validations:
+      required: true

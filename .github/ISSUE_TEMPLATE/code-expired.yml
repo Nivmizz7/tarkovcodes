@@ -1,0 +1,37 @@
+name: Code expired
+description: A code on the site that no longer works
+title: "Expired: "
+labels: ["expired"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before reporting: copy the code from the site (codes are case sensitive), and try updating or reinstalling the launcher. Old launchers sometimes reject working codes.
+  - type: input
+    id: code
+    attributes:
+      label: Code
+      placeholder: READ80LV
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which mode did you try it in?
+      options:
+        - PvP
+        - PvP-S (seasonal character)
+        - PvE
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: message
+    attributes:
+      label: What did the launcher say?
+      placeholder: "Code not found / Code already activated / ..."
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
+      description: A screenshot of the error helps.

@@ -1,0 +1,44 @@
+name: New code
+description: A promo code that isn't on the site yet
+title: "New code: "
+labels: ["new code"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Please check the code isn't already on [tarkovcodes.pages.dev](https://tarkovcodes.pages.dev), including the expired section at the bottom.
+  - type: input
+    id: code
+    attributes:
+      label: Code
+      description: Exactly as it's typed, codes are case sensitive.
+      placeholder: READ80LV
+    validations:
+      required: true
+  - type: checkboxes
+    id: modes
+    attributes:
+      label: Which modes does it work in?
+      description: Tick the ones you know. Leave them all empty if you're not sure.
+      options:
+        - label: PvP
+        - label: PvP-S (seasonal character)
+        - label: PvE
+  - type: textarea
+    id: reward
+    attributes:
+      label: What does it give?
+      description: A short list is fine. A screenshot of the in-game Showcase window is even better, paste or drag it in here.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Where did you find it?
+      description: A link to the post, stream or article, if there is one.
+      placeholder: https://x.com/...
+  - type: input
+    id: date
+    attributes:
+      label: When did it come out?
+      placeholder: 2026-12-01

@@ -1,4 +1,5 @@
 import type { ImageMetadata } from 'astro';
+// Working
 import read80lv from './assets/rewards/read80lv.png';
 import oneYearOfEscaping from './assets/rewards/1yearofescaping.png';
 import undeadtarkov from './assets/rewards/undeadtarkov.png';
@@ -10,8 +11,18 @@ import playyourway from './assets/rewards/playyourway.png';
 import ninegag from './assets/rewards/9gag.png';
 import gamespark from './assets/rewards/gamespark.png';
 import pcgamesn from './assets/rewards/pcgamesn.png';
+// Expired
+import lvl1scav from './assets/rewards/lvl1scav.png';
+import lvl80boss from './assets/rewards/lvl80boss.png';
+import threedmgame from './assets/rewards/3dmgame.png';
+import keytool from './assets/rewards/keytool.png';
+import wipe from './assets/rewards/wipe.png';
+import promocode from './assets/rewards/promocode.png';
+import yystv from './assets/rewards/yystv.png';
+import polygon from './assets/rewards/polygon.png';
+import automaton from './assets/rewards/automaton.png';
 
-export type Status = 'working' | 'not-working';
+export type Status = 'working' | 'expired';
 /** pvp = regular PvP, pvps = seasonal PvP character, pve = PvE. */
 export type Mode = 'pvp' | 'pvps' | 'pve';
 
@@ -43,11 +54,13 @@ export interface PromoCode {
 export const updated = '2026-11-21';
 
 // To add a reward: put the screenshot in src/assets/rewards/, import it above,
-// and set `reward` on the code. To retire a code: set status to 'not-working'.
+// and set `reward` on the code. To retire a code: set status to 'expired' and
+// it moves to the expired section at the bottom.
 // Order here doesn't matter: the page sorts by `added`, newest first.
 export const codes: PromoCode[] = [
-  { code: 'READ80LV', status: 'working', modes: PVE_ONLY, added: '2026-11-17', reward: read80lv },
-  { code: '1YEAROFESCAPING', status: 'working', modes: ALL_MODES, added: '2026-11-15', reward: oneYearOfEscaping },
+  // ---- Working ----
+  { code: 'READ80LV', status: 'working', modes: ALL_MODES, added: '2026-11-17', reward: read80lv },
+  { code: '1YEAROFESCAPING', status: 'expired', modes: ALL_MODES, added: '2026-11-15', reward: oneYearOfEscaping },
   { code: 'PCGAMESN', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code', reward: pcgamesn },
   { code: 'GAMESPARK', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code', reward: gamespark },
   {
@@ -85,4 +98,69 @@ export const codes: PromoCode[] = [
     reward: playyourway,
   },
   { code: '9GAG', status: 'working', modes: PVE_ONLY, added: '2026-11-14', reward: ninegag },
+
+  // ---- Expired ----
+  { code: 'LVL1SCAV', status: 'expired', modes: ALL_MODES, added: '2026-07-19', reward: lvl1scav },
+  {
+    code: 'FREETARCOINS',
+    status: 'expired',
+    modes: ALL_MODES,
+    added: '2026-07-23',
+    note: '150 Tarcoins, first 20,000 players',
+  },
+  {
+    code: 'LVL80BOSS',
+    status: 'expired',
+    modes: ALL_MODES,
+    added: '2026-07-27',
+    note: 'PKP, Pilgrim, ZSh with visor, LBCR, earbuds, Defender armour',
+    reward: lvl80boss,
+  },
+  {
+    code: '3DMGAME',
+    status: 'expired',
+    modes: ['pvps'],
+    added: '2026-08-02',
+    note: 'Season only, at the start of the season',
+    reward: threedmgame,
+  },
+  {
+    code: 'W2TX-6NU9-UFK1-89RW-M96B',
+    status: 'expired',
+    modes: ALL_MODES,
+    added: '2026-08-03',
+    note: 'Key tool and 9A-91 Tactical kit',
+    reward: keytool,
+  },
+  { code: '6NU9-UFK1-W2TX-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
+  { code: '6NU9-W2TX-UFK1-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
+  { code: 'UFK1-6NU9-W2TX-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
+  { code: 'UFK1-W2TX-6NU9-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
+  { code: 'W2TX-UFK1-6NU9-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
+  { code: 'WIPE', status: 'expired', modes: ALL_MODES, added: '2026-08-05', reward: wipe },
+  { code: 'PROMOCODE', status: 'expired', modes: ['pvp'], added: '2026-08-10', note: 'Roubles', reward: promocode },
+  {
+    code: 'OMG150TARCOINS',
+    status: 'expired',
+    modes: ALL_MODES,
+    added: '2026-08-26',
+    note: '150 Tarcoins, first 30,000 players',
+  },
+  {
+    code: 'SUDAKTUDAK',
+    status: 'expired',
+    modes: ALL_MODES,
+    added: '2026-09-09',
+    note: 'Sudak-Tudak kit, first 10,000 players',
+  },
+  { code: 'YYSTV', status: 'expired', modes: PVE_ONLY, added: '2026-10-06', reward: yystv },
+  { code: 'POLYGON', status: 'expired', modes: PVE_ONLY, added: '2026-10-06', reward: polygon },
+  { code: 'AUTOMATON', status: 'expired', modes: PVE_ONLY, added: '2026-10-06', reward: automaton },
+  {
+    code: 'JUST150TARCOINS',
+    status: 'expired',
+    modes: ALL_MODES,
+    added: '2026-10-08',
+    note: '150 Tarcoins, first 40,000 players',
+  },
 ];
