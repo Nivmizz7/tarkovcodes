@@ -80,7 +80,7 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
           </span>
         ) : (
           item.modes.map((m) => (
-            <span class={`mode ${m}`} title={single ? `${modeTitle[m]} ${en.only}` : modeTitle[m]} data-mode={m}>
+            <span class={`mode ${m}`} title={single ? `${modeTitle[m]} ${m === 'pve' ? en.only : ''}`.trim() : modeTitle[m]} data-mode={m}>
               {modeLabel[m]}
               {single && <span class="only">{en.only}</span>}
             </span>

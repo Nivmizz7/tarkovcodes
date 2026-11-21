@@ -89,7 +89,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           <div class="seg">
             <label class="opt all" title={en.showAllTitle}>
               <input type="radio" name="mode" value="all" checked />
-              <span><span class="dot" aria-hidden="true"></span>{en.all} <span class="n">{working.length}</span></span>
+              <span><span class="dot" aria-hidden="true"></span><span class="opt-label">{en.all}</span> <span class="n">{working.length}</span></span>
             </label>
             {
               modes.map((m) => (
@@ -97,7 +97,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
                   <input type="radio" name="mode" value={m} />
                   <span>
                     <span class="dot" aria-hidden="true"></span>
-                    {modeLabel[m]} <span class="n">{counts[m]}</span>
+                    <span class="opt-label">{modeLabel[m]}</span> <span class="n">{counts[m]}</span>
                   </span>
                 </label>
               ))
@@ -187,11 +187,11 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           document.querySelector('.sub').textContent = t.subtitle;
           document.querySelector('.picker legend').textContent = t.play;
           document.querySelector('.opt.all').title = t.showAllTitle;
-          document.querySelector('.opt.all > span').firstChild.nextSibling.textContent = t.all + ' ';
+          document.querySelector('.opt.all .opt-label').textContent = t.all;
           document.querySelectorAll('.opt[data-mode-picker]').forEach((el) => {
             const mode = el.dataset.modePicker;
             el.title = t.working + ' ' + (locale === 'fr' ? 'en' : 'in') + ' ' + t.modes[mode];
-            el.querySelector(':scope > span').firstChild.nextSibling.textContent = t.modes[mode] + ' ';
+            el.querySelector('.opt-label').textContent = t.modes[mode];
           });
           document.querySelector('.steps').setAttribute('aria-label', t.redeemAria);
           document.querySelectorAll('.steps li').forEach((li, i) => {
@@ -224,7 +224,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           document.querySelectorAll('.mode[data-mode]').forEach((el) => {
             const mode = el.dataset.mode;
             if (mode === 'all') return;
-            el.title = el.querySelector('.only') ? t.modeTitles[mode] + ' — ' + t.only : t.modeTitles[mode];
+            el.title = el.querySelector('.only') ? t.modeTitles[mode] + ' ' + t.only : t.modeTitles[mode];
           });
           document.querySelectorAll('[data-status]').forEach((el) => {
             el.textContent = el.dataset.status === 'working' ? t.working : t.expiredStatus;
