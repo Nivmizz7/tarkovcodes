@@ -6,7 +6,6 @@ import CodeCard from '../components/CodeCard.astro';
 import { codes, modes, updated } from '../codes';
 import fr from '../i18n/fr.json';
 import en from '../i18n/en.json';
-import contributors from '../i18n/contributors.json';
 import type { Mode } from '../codes';
 
 const modeLabel = en.modes as Record<Mode, string>;
@@ -81,7 +80,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
     <main>
       <div class="hero">
         <div>
-          <p class="kicker" data-updated-label={updatedLabel}><span class="sq"></span>{en.updated} {updatedLabel}</p>
+          <p class="kicker" data-updated-date={updated}><span class="sq"></span>{en.updated} {updatedLabel}</p>
           <h1>{en.heading}</h1>
           <p class="sub">{en.subtitle}</p>
         </div>
@@ -94,7 +93,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
             </label>
             {
               modes.map((m) => (
-                <label class={`opt ${m}`} title={`${en.working} in ${modeLabel[m]}`}>
+                <label class={`opt ${m}`} data-mode-picker={m} title={`${en.working} in ${modeLabel[m]}`}>
                   <input type="radio" name="mode" value={m} />
                   <span>
                     <span class="dot" aria-hidden="true"></span>
@@ -143,11 +142,11 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
         <div class="socials">
           <a class="social discord" href={discord} target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.028C.533 9.046-.319 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.042-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.011c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.01c.12.099.246.198.373.292a.077.077 0 0 1-.007.128c-.598.349-1.22.645-1.873.891a.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.029zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/></svg>
-            <span><b>Discord</b><small>Chat and code drops</small></span>
+            <span><b>Discord</b><small class="discord-subtitle">{en.discordSubtitle}</small></span>
           </a>
           <a class="social github" href={repo} target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-            <span><b>GitHub</b><small>Source and issues</small></span>
+            <span><b>GitHub</b><small class="github-subtitle">{en.githubSubtitle}</small></span>
           </a>
         </div>
         <p>
@@ -156,33 +155,6 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           <a class="open-source" href={repo} target="_blank" rel="noopener">{en.openSource}</a>.
         </p>
         <p>{en.disclaimer}</p>
-        <div class="contributors-footer">
-          <a class="repo-link" href={repo} target="_blank" rel="noopener" aria-label="GitHub repository">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-              <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.64-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.96c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.86v2.62c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"></path>
-            </svg>
-            GitHub
-          </a>
-          <span class="contributors-label">{en.contributors}</span>
-          <div class="contributors">
-            {contributors.map((contributor) => (
-              <a
-                href={contributor.html_url}
-                target="_blank"
-                rel="noopener"
-                title={`${contributor.login} — ${contributor.contributions} contributions`}
-              >
-                <img
-                  src={contributor.avatar_url}
-                  alt={contributor.login}
-                  width="34"
-                  height="34"
-                  loading="lazy"
-                />
-              </a>
-            ))}
-          </div>
-        </div>
       </footer>
     </main>
 
@@ -193,7 +165,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
       (() => {
         const localeButtons = document.querySelectorAll('[data-locale]');
         const applyLocale = (locale) => {
-          const t = locales[locale] || locales.fr;
+          const t = Object.prototype.hasOwnProperty.call(locales, locale) ? locales[locale] : locales.en;
           document.documentElement.lang = locale;
           document.title = t.meta.title;
           document.querySelector('meta[name="description"]')?.setAttribute('content', t.meta.description);
@@ -206,12 +178,21 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           document.querySelector('.suggest').lastChild.textContent = ' ' + t.suggestCode;
           document.querySelector('.brand').textContent = t.brand;
           const kicker = document.querySelector('.kicker');
-          kicker.lastChild.textContent = t.updated + ' ' + kicker.dataset.updatedLabel;
+          const updatedDate = new Date(kicker.dataset.updatedDate + 'T00:00:00Z').toLocaleDateString(
+            locale === 'fr' ? 'fr-FR' : 'en-GB',
+            { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' },
+          );
+          kicker.lastChild.textContent = t.updated + ' ' + updatedDate;
           document.querySelector('h1').textContent = t.heading;
           document.querySelector('.sub').textContent = t.subtitle;
           document.querySelector('.picker legend').textContent = t.play;
           document.querySelector('.opt.all').title = t.showAllTitle;
           document.querySelector('.opt.all > span').firstChild.nextSibling.textContent = t.all + ' ';
+          document.querySelectorAll('.opt[data-mode-picker]').forEach((el) => {
+            const mode = el.dataset.modePicker;
+            el.title = t.working + ' ' + (locale === 'fr' ? 'en' : 'in') + ' ' + t.modes[mode];
+            el.querySelector(':scope > span').firstChild.nextSibling.textContent = t.modes[mode] + ' ';
+          });
           document.querySelector('.steps').setAttribute('aria-label', t.redeemAria);
           document.querySelectorAll('.steps li').forEach((li, i) => {
             if (i === 0) li.lastChild.textContent = t.redeem[0];
@@ -227,12 +208,13 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           document.querySelector('.exp-sub')?.replaceChildren(t.expiredSubtitle);
           document.querySelector('.show')?.replaceChildren(t.show);
           document.querySelector('.hide')?.replaceChildren(t.hide);
-          document.querySelector('.contributors-label').textContent = t.contributors;
           document.querySelector('.footer-new-code').textContent = t.footerNewCode;
           document.querySelector('.tell-us').textContent = t.tellUs;
           document.querySelector('.open-source').textContent = t.openSource;
           document.querySelector('.site-is').textContent = t.siteIs;
           document.querySelector('footer > p:last-of-type').textContent = t.disclaimer;
+          document.querySelector('.discord-subtitle').textContent = t.discordSubtitle;
+          document.querySelector('.github-subtitle').textContent = t.githubSubtitle;
           document.querySelector('.viewer').setAttribute('aria-label', t.viewerAria);
 
           document.querySelectorAll('.mode.all').forEach((el) => {
@@ -241,6 +223,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           });
           document.querySelectorAll('.mode[data-mode]').forEach((el) => {
             const mode = el.dataset.mode;
+            if (mode === 'all') return;
             el.title = el.querySelector('.only') ? t.modeTitles[mode] + ' — ' + t.only : t.modeTitles[mode];
           });
           document.querySelectorAll('[data-status]').forEach((el) => {
@@ -280,7 +263,12 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
         };
 
         let initialLocale = 'en';
-        try { initialLocale = localStorage.getItem('tc-language') || 'en'; } catch {}
+        try {
+          const savedLocale = localStorage.getItem('tc-language');
+          initialLocale = savedLocale && Object.prototype.hasOwnProperty.call(locales, savedLocale)
+            ? savedLocale
+            : 'en';
+        } catch {}
         localeButtons.forEach((button) => button.addEventListener('click', () => applyLocale(button.dataset.locale)));
         applyLocale(initialLocale);
 
@@ -1027,43 +1015,6 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
     outline: 2px solid var(--teal);
     outline-offset: 2px;
   }
-  .contributors-footer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 18px;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
-  }
-  .repo-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    text-decoration: none;
-  }
-  .repo-link svg {
-    fill: currentColor;
-  }
-  .contributors-label {
-    margin-left: 4px;
-  }
-  .contributors {
-    display: flex;
-    align-items: center;
-  }
-  .contributors a {
-    display: block;
-    margin-left: -5px;
-  }
-  .contributors a:first-child {
-    margin-left: 0;
-  }
-  .contributors img {
-    display: block;
-    border: 2px solid var(--bg);
-    border-radius: 50%;
-    background: var(--panel);
-  }
   .socials {
     display: flex;
     flex-wrap: wrap;
@@ -1195,9 +1146,6 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
     }
     .language-picker {
       margin-left: 10px;
-    }
-    .contributors-footer {
-      flex-wrap: wrap;
     }
   }
   @media (prefers-reduced-motion: reduce) {

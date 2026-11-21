@@ -46,7 +46,8 @@
   "expiredStatus": "Expiré",
   "only": "uniquement",
   "added": "Ajouté le",
-  "contributors": "Contributeurs",
+  "discordSubtitle": "Discussion et nouveaux codes",
+  "githubSubtitle": "Code source et problèmes",
   "modes": {
     "pvp": "PvP",
     "pvps": "PvP-S",

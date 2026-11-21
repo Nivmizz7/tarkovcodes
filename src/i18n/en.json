@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Tarkov Promo Codes",
-    "description": "Latest Escape from Tarkov promo codes for PvP, seasonal PvP and PvE, with one-click copy and reward previews.",
+    "description": "Latest Escape from Tarkov promo codes for PvP, PvP-S and PvE, with one-click copy and the rewards you get.",
     "ogImageAlt": "Escape from Tarkov code activation dialog with tarkovcodes.pages.dev typed in and Code activated"
   },
   "brand": "Tarkov Codes",
@@ -26,12 +26,12 @@
   "expired": "Expired codes",
   "show": "Show",
   "hide": "Hide",
-  "expiredSubtitle": "These do not work anymore. Kept so you can see what they gave.",
+  "expiredSubtitle": "These don't work any more. Kept so you can see what they gave.",
   "footerNewCode": "Got a new code, or one that stopped working?",
   "tellUs": "Tell us on GitHub",
   "openSource": "open source",
   "siteIs": "The site is",
-  "disclaimer": "Codes are case-sensitive and often expire quickly. Fan site, not affiliated with Battlestate Games.",
+  "disclaimer": "Codes are case sensitive and often expire fast. Fan site, not affiliated with Battlestate Games.",
   "viewerAria": "Reward screenshot",
   "copy": "Copy",
   "copied": "Copied",
@@ -46,7 +46,8 @@
   "expiredStatus": "Expired",
   "only": "only",
   "added": "Added",
-  "contributors": "Contributors",
+  "discordSubtitle": "Chat and code drops",
+  "githubSubtitle": "Source and issues",
   "modes": {
     "pvp": "PvP",
     "pvps": "PvP-S",
