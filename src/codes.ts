@@ -2,7 +2,6 @@ import type { ImageMetadata } from 'astro';
 import type en from './i18n/en.json';
 // Working
 import read80lv from './assets/rewards/read80lv.png';
-import oneYearOfEscaping from './assets/rewards/1yearofescaping.png';
 import undeadtarkov from './assets/rewards/undeadtarkov.png';
 import tarkovhalloween from './assets/rewards/tarkovhalloween.png';
 import embracepain from './assets/rewards/embracepain.png';
@@ -13,6 +12,7 @@ import ninegag from './assets/rewards/9gag.png';
 import gamespark from './assets/rewards/gamespark.png';
 import pcgamesn from './assets/rewards/pcgamesn.png';
 // Expired
+import oneYearOfEscaping from './assets/rewards/1yearofescaping.png';
 import lvl1scav from './assets/rewards/lvl1scav.png';
 import lvl80boss from './assets/rewards/lvl80boss.png';
 import threedmgame from './assets/rewards/3dmgame.png';
@@ -55,7 +55,6 @@ export const updated = '2026-11-21';
 export const codes: PromoCode[] = [
   // ---- Working ----
   { code: 'READ80LV', status: 'working', modes: ALL_MODES, added: '2026-11-17', reward: read80lv },
-  { code: '1YEAROFESCAPING', status: 'expired', modes: ALL_MODES, added: '2026-11-15', reward: oneYearOfEscaping },
   { code: 'PCGAMESN', status: 'working', modes: ALL_MODES, added: '2026-08-03', noteKey: 'kordBreach', reward: pcgamesn },
   { code: 'GAMESPARK', status: 'working', modes: ALL_MODES, added: '2026-08-03', noteKey: 'kordBreach', reward: gamespark },
   {
@@ -83,7 +82,7 @@ export const codes: PromoCode[] = [
     reward: embracepain,
   },
   { code: 'INVEN', status: 'working', modes: PVE_ONLY, added: '2026-10-07', reward: inven },
-  { code: 'PVEPRESTIGE', status: 'working', modes: PVE_ONLY, reward: pveprestige },
+  { code: 'PVEPRESTIGE', status: 'working', modes: PVE_ONLY, added: '2026-10-08', reward: pveprestige },
   {
     code: 'PLAYYOURWAY',
     status: 'working',
@@ -95,6 +94,7 @@ export const codes: PromoCode[] = [
   { code: '9GAG', status: 'working', modes: PVE_ONLY, added: '2026-11-14', reward: ninegag },
 
   // ---- Expired ----
+  { code: '1YEAROFESCAPING', status: 'expired', modes: ALL_MODES, added: '2026-11-15', reward: oneYearOfEscaping },
   { code: 'LVL1SCAV', status: 'expired', modes: ALL_MODES, added: '2026-07-19', reward: lvl1scav },
   {
     code: 'FREETARCOINS',

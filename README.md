@@ -40,7 +40,7 @@ npm run build    # static site in dist/
 
 ## How it's built
 
-A static [Astro](https://astro.build) site with no framework JavaScript. The only script on the page is a small inline one for copying, the mode picker and the screenshot viewer. Reward screenshots go through Astro's image pipeline (AVIF and WebP, lazy loaded). It's hosted on Cloudflare Pages.
+A static [Astro](https://astro.build) site with no framework JavaScript. The only script on the page is a small inline one for the language switch, copying, the mode picker and the screenshot viewer. Reward screenshots go through Astro's image pipeline (AVIF and WebP, lazy loaded). It's hosted on Cloudflare Pages.
 
 | Path | What's there |
 |---|---|
