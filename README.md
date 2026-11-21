@@ -8,6 +8,7 @@ Escape from Tarkov promo codes in one place: click to copy, see what each code g
 - A screenshot of the rewards for most codes (click to enlarge)
 - "I play" picker for PvP, PvP-S (seasonal) and PvE
 - Expired codes kept at the bottom so you can see what they gave
+- English and French (text lives in `src/i18n/`)
 
 ## Know a code? Found one that stopped working?
 

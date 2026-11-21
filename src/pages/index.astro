@@ -72,7 +72,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
         </div>
         <a class="suggest" href={`${repo}/issues/new/choose`} target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
-          {en.suggestCode}
+          <span class="suggest-label">{en.suggestCode}</span>
         </a>
       </div>
     </header>
@@ -93,7 +93,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
             </label>
             {
               modes.map((m) => (
-                <label class={`opt ${m}`} data-mode-picker={m} title={`${en.working} in ${modeLabel[m]}`}>
+                <label class={`opt ${m}`} data-mode-picker={m} title={`${en.pickerTitle} ${modeLabel[m]}`}>
                   <input type="radio" name="mode" value={m} />
                   <span>
                     <span class="dot" aria-hidden="true"></span>
@@ -175,7 +175,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', t.meta.title);
           document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', t.meta.description);
 
-          document.querySelector('.suggest').lastChild.textContent = ' ' + t.suggestCode;
+          document.querySelector('.suggest-label').textContent = t.suggestCode;
           document.querySelector('.brand').textContent = t.brand;
           const kicker = document.querySelector('.kicker');
           const updatedDate = new Date(kicker.dataset.updatedDate + 'T00:00:00Z').toLocaleDateString(
@@ -190,7 +190,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           document.querySelector('.opt.all .opt-label').textContent = t.all;
           document.querySelectorAll('.opt[data-mode-picker]').forEach((el) => {
             const mode = el.dataset.modePicker;
-            el.title = t.working + ' ' + (locale === 'fr' ? 'en' : 'in') + ' ' + t.modes[mode];
+            el.title = t.pickerTitle + ' ' + t.modes[mode];
             el.querySelector('.opt-label').textContent = t.modes[mode];
           });
           document.querySelector('.steps').setAttribute('aria-label', t.redeemAria);
@@ -246,7 +246,8 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
             el.textContent = el.closest('li').classList.contains('dead') ? t.noScreenshot : t.noScreenshotYet;
           });
           document.querySelectorAll('[data-note-key]').forEach((el) => {
-            el.textContent = t.codeNotes[el.dataset.noteKey];
+            // Fall back to English if a note hasn't been translated yet.
+            el.textContent = t.codeNotes[el.dataset.noteKey] ?? locales.en.codeNotes[el.dataset.noteKey] ?? el.textContent;
           });
           document.querySelectorAll('time[data-added]').forEach((el) => {
             el.textContent = t.added + ' ' + new Date(el.dataset.added + 'T00:00:00Z').toLocaleDateString(
@@ -445,6 +446,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
     text-decoration: none;
     color: var(--bright);
     text-shadow: 0 1px 0 #000;
+    white-space: nowrap;
   }
   .suggest {
     margin-left: auto;
@@ -1145,7 +1147,31 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
       font-size: 15px;
     }
     .language-picker {
-      margin-left: 10px;
+      margin-left: 6px;
+      gap: 0;
+    }
+    .brand {
+      font-size: 17px;
+      letter-spacing: 0.03em;
+    }
+    .suggest {
+      font-size: 14px;
+      padding-right: 10px;
+    }
+  }
+  /* Smallest phones: the suggest button keeps just its + icon. The label
+     stays in the accessibility tree. */
+  @media (max-width: 379px) {
+    .suggest {
+      padding: 6px 9px;
+    }
+    .suggest-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
   }
   @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,5 @@
 import type { ImageMetadata } from 'astro';
+import type en from './i18n/en.json';
 // Working
 import read80lv from './assets/rewards/read80lv.png';
 import oneYearOfEscaping from './assets/rewards/1yearofescaping.png';
@@ -30,12 +31,6 @@ export const modes: Mode[] = ['pvp', 'pvps', 'pve'];
 // A code works in every mode unless it's PvE exclusive.
 const ALL_MODES: Mode[] = ['pvp', 'pvps', 'pve'];
 const PVE_ONLY: Mode[] = ['pve'];
-export const modeLabel: Record<Mode, string> = { pvp: 'PvP', pvps: 'PvP-S', pve: 'PvE' };
-export const modeTitle: Record<Mode, string> = {
-  pvp: 'Works in PvP',
-  pvps: 'Works on the seasonal PvP character',
-  pve: 'Works in PvE',
-};
 
 export interface PromoCode {
   code: string;
@@ -44,8 +39,8 @@ export interface PromoCode {
   modes: Mode[];
   /** Date the code was posted, YYYY-MM-DD. Newest show first. */
   added?: string;
-  /** Short line about what it gives or where it works. */
-  noteKey?: string;
+  /** Short line about what it gives or where it works: a key from `codeNotes` in src/i18n/en.json and fr.json. */
+  noteKey?: keyof typeof en.codeNotes;
   /** Screenshot of the stash showcase you get for this code. */
   reward?: ImageMetadata;
 }
