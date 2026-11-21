@@ -8,6 +8,8 @@ import inven from './assets/rewards/inven.png';
 import pveprestige from './assets/rewards/pveprestige.png';
 import playyourway from './assets/rewards/playyourway.png';
 import ninegag from './assets/rewards/9gag.png';
+import gamespark from './assets/rewards/gamespark.png';
+import pcgamesn from './assets/rewards/pcgamesn.png';
 
 export type Status = 'working' | 'not-working';
 /** pvp = regular PvP, pvps = seasonal PvP character, pve = PvE. */
@@ -46,8 +48,8 @@ export const updated = '2026-11-21';
 export const codes: PromoCode[] = [
   { code: 'READ80LV', status: 'working', modes: PVE_ONLY, added: '2026-11-17', reward: read80lv },
   { code: '1YEAROFESCAPING', status: 'working', modes: ALL_MODES, added: '2026-11-15', reward: oneYearOfEscaping },
-  { code: 'PCGAMESN', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code' },
-  { code: 'GAMESPARK', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code' },
+  { code: 'PCGAMESN', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code', reward: pcgamesn },
+  { code: 'GAMESPARK', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code', reward: gamespark },
   {
     code: 'UNDEADTARKOV',
     status: 'working',

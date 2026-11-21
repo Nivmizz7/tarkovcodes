@@ -3,7 +3,7 @@ import '@fontsource/saira-semi-condensed/latin-400.css';
 import '@fontsource/saira-semi-condensed/latin-700.css';
 import '@fontsource/jetbrains-mono/latin-700.css';
 import CodeCard from '../components/CodeCard.astro';
-import { codes, modes, modeLabel, modeTitle, updated } from '../codes';
+import { codes, modes, modeLabel, updated } from '../codes';
 
 const updatedLabel = new Date(updated + 'T00:00:00Z').toLocaleDateString('en-GB', {
   day: 'numeric',
@@ -40,17 +40,26 @@ const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.mod
           <h1>Promo Codes</h1>
           <p class="sub">Free gear for Escape from Tarkov. Codes work in every mode unless marked PvE only.</p>
         </div>
-        <div class="filters" role="group" aria-label="Show codes for" hidden>
-          {
-            modes.map((m) => (
-              <button class={`chip ${m}`} type="button" data-mode={m} aria-pressed="true" title={modeTitle[m]}>
-                <span class="box" aria-hidden="true"></span>
-                {modeLabel[m]}
-                <span class="n">{counts[m]}</span>
-              </button>
-            ))
-          }
-        </div>
+        <fieldset class="picker" hidden>
+          <legend>I play</legend>
+          <div class="seg">
+            <label class="opt all" title="Show every code">
+              <input type="radio" name="mode" value="all" checked />
+              <span><span class="dot" aria-hidden="true"></span>All <span class="n">{codes.length}</span></span>
+            </label>
+            {
+              modes.map((m) => (
+                <label class={`opt ${m}`} title={`Codes that work in ${modeLabel[m]}`}>
+                  <input type="radio" name="mode" value={m} />
+                  <span>
+                    <span class="dot" aria-hidden="true"></span>
+                    {modeLabel[m]} <span class="n">{counts[m]}</span>
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
       </div>
 
       <ol class="steps" aria-label="How to redeem">
@@ -62,7 +71,7 @@ const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.mod
       <ul class="grid">
         {sorted.map((item, i) => <CodeCard item={item} eager={i < 3} />)}
       </ul>
-      <p class="empty-msg" hidden>No codes for the modes you picked. Turn one back on above.</p>
+      <p class="empty-msg" hidden>No codes for this mode yet.</p>
 
       <footer>Codes are case sensitive and often expire fast. Fan site, not affiliated with Battlestate Games.</footer>
     </main>
@@ -141,40 +150,35 @@ const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.mod
           t = setTimeout(() => toast.classList.remove('show'), 1600);
         });
 
-        // Mode toggles: a card shows when any of its modes is switched on
-        const KEY = 'tc-modes';
-        const bar = document.querySelector('.filters');
-        const chips = [...bar.querySelectorAll('[data-mode]')];
+        // "I play" picker: show the codes that work in the chosen mode
+        const KEY = 'tc-mode';
+        const picker = document.querySelector('.picker');
         const cards = [...document.querySelectorAll('.grid > li')];
         const emptyMsg = document.querySelector('.empty-msg');
-        let off = [];
-        try {
-          off = JSON.parse(localStorage.getItem(KEY) || '[]');
-        } catch {}
-        // Never open on an empty page: a saved "everything off" starts fresh.
-        if (!Array.isArray(off) || chips.every((c) => off.includes(c.dataset.mode))) off = [];
-        const apply = () => {
+        const apply = (mode) => {
           let shown = 0;
-          for (const c of chips) c.setAttribute('aria-pressed', String(!off.includes(c.dataset.mode)));
           for (const card of cards) {
-            const show = card.dataset.modes.split(' ').some((m) => !off.includes(m));
+            const show = mode === 'all' || card.dataset.modes.split(' ').includes(mode);
             card.hidden = !show;
             if (show) shown++;
           }
           emptyMsg.hidden = shown > 0;
-          try {
-            localStorage.setItem(KEY, JSON.stringify(off));
-          } catch {}
         };
-        bar.addEventListener('click', (e) => {
-          const chip = e.target.closest('[data-mode]');
-          if (!chip) return;
-          const m = chip.dataset.mode;
-          off = off.includes(m) ? off.filter((x) => x !== m) : [...off, m];
-          apply();
+        let saved = 'all';
+        try {
+          saved = localStorage.getItem(KEY) || 'all';
+          localStorage.removeItem('tc-modes'); // old toggle setting
+        } catch {}
+        const input = picker.querySelector(`input[value="${CSS.escape(saved)}"]`) || picker.querySelector('input');
+        input.checked = true;
+        picker.addEventListener('change', (e) => {
+          apply(e.target.value);
+          try {
+            localStorage.setItem(KEY, e.target.value);
+          } catch {}
         });
-        bar.hidden = false;
-        apply();
+        picker.hidden = false;
+        apply(input.value);
       })();
     </script>
   </body>
@@ -292,71 +296,98 @@ const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.mod
     color: var(--muted);
     max-width: 58ch;
   }
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  /* "I play" picker: one choice, the chosen one gets the metal button look */
+  .picker {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
   }
-  .chip {
+  .picker legend {
+    padding: 0;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 3px;
+    padding: 3px;
+    background: #0d0e0e;
+    border: 1px solid var(--line-hi);
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+  .opt {
     --c: var(--text);
-    display: inline-flex;
+    position: relative;
+    cursor: pointer;
+  }
+  .opt input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .opt > span {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 14px 6px 10px;
-    font: inherit;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 16px;
     font-size: 17px;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--c);
-    background: color-mix(in srgb, var(--c) 14%, #0f1010);
-    border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
-    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
-    cursor: pointer;
-    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    color: var(--text);
+    transition: background-color 0.15s, color 0.15s;
   }
-  .chip .box {
-    width: 14px;
-    height: 14px;
-    border: 2px solid currentColor;
-    display: grid;
-    place-items: center;
+  .opt .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--c);
   }
-  .chip[aria-pressed='true'] .box::after {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: currentColor;
+  .opt.all .dot {
+    background: linear-gradient(135deg, #e3a857 0 33%, #b99cff 33% 66%, #6fd5b4 66%);
   }
-  .chip .n {
+  .opt .n {
     font-size: 13px;
     font-weight: 400;
-    opacity: 0.8;
-  }
-  .chip[aria-pressed='false'] {
     color: var(--muted);
-    background: #0f1010;
-    border-color: var(--line-hi);
-    opacity: 0.6;
   }
-  .chip[aria-pressed='false'] .n {
-    opacity: 0.5;
+  .opt:hover > span {
+    background: #1d2020;
+    color: var(--bright);
   }
-  .chip:hover {
-    filter: brightness(1.15);
+  .opt input:checked + span {
+    background: var(--metal);
+    color: var(--metal-ink);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
   }
-  .chip:focus-visible {
+  .opt input:checked + span .n {
+    color: var(--metal-ink);
+    opacity: 0.7;
+  }
+  .opt input:checked + span .dot {
+    outline: 1px solid rgba(30, 65, 110, 0.5);
+  }
+  .opt input:focus-visible + span {
     outline: 2px solid var(--teal);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
-  .chip.pvp,
+  .opt.pvp,
   .mode.pvp {
     --c: #e3a857;
   }
-  .chip.pvps,
+  .opt.pvps,
   .mode.pvps {
     --c: #b99cff;
   }
-  .chip.pve,
+  .opt.pve,
   .mode.pve {
     --c: #6fd5b4;
   }
@@ -691,7 +722,15 @@ const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.mod
     .code-text {
       font-size: 15px;
     }
-    .chip {
+    .picker {
+      width: 100%;
+    }
+    .seg {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .opt > span {
+      padding: 7px 4px;
+      gap: 5px;
       font-size: 15px;
     }
   }
