@@ -52,4 +52,4 @@ A static [Astro](https://astro.build) site with no framework JavaScript. The onl
 
 ## Disclaimer
 
-Fan site, not affiliated with or endorsed by Battlestate Games. Escape from Tarkov and its in-game imagery, including the reward screenshots, belong to Battlestate Games. The MIT license covers this project's code only.
+Fan site, not affiliated with or endorsed by Battlestate Games. Escape from Tarkov and its in-game imagery, including the reward screenshots, belong to Battlestate Games. The [MIT license](LICENSE) covers this project's code only, not the game imagery in `src/assets/rewards/`, `scripts/source/` or `public/og.png`.
