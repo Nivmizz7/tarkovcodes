@@ -11,6 +11,11 @@ const updatedLabel = new Date(updated + 'T00:00:00Z').toLocaleDateString('en-GB'
   year: 'numeric',
   timeZone: 'UTC',
 });
+const siteUrl = new URL('/', Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+const description =
+  'Latest Escape from Tarkov promo codes for PvP, PvP-S and PvE, with one-click copy and the rewards you get.';
+
 // Newest first; codes without a date go last.
 const sorted = [...codes].sort((a, b) => (b.added ?? '').localeCompare(a.added ?? ''));
 const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.modes.includes(m)).length]));
@@ -22,9 +27,27 @@ const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.mod
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#131414" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Tarkov Promo Codes</title>
-    <meta name="description" content="Latest Escape from Tarkov promo codes for PvP and PvE, with one-click copy and the rewards you get." />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={siteUrl} />
+
+    <!-- Link preview: the in-game "Code activation" dialog with the site URL typed in -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tarkov Codes" />
+    <meta property="og:url" content={siteUrl} />
+    <meta property="og:title" content="Tarkov Promo Codes" />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Escape from Tarkov code activation dialog with tarkovcodes.pages.dev typed in and Code activated" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tarkov Promo Codes" />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <header class="topbar">
