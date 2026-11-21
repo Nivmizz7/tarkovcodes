@@ -1,0 +1,703 @@
+---
+import '@fontsource/saira-semi-condensed/latin-400.css';
+import '@fontsource/saira-semi-condensed/latin-700.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import CodeCard from '../components/CodeCard.astro';
+import { codes, modes, modeLabel, modeTitle, updated } from '../codes';
+
+const updatedLabel = new Date(updated + 'T00:00:00Z').toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+// Newest first; codes without a date go last.
+const sorted = [...codes].sort((a, b) => (b.added ?? '').localeCompare(a.added ?? ''));
+const counts = Object.fromEntries(modes.map((m) => [m, codes.filter((c) => c.modes.includes(m)).length]));
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#131414" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Tarkov Promo Codes</title>
+    <meta name="description" content="Latest Escape from Tarkov promo codes for PvP and PvE, with one-click copy and the rewards you get." />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="bar-inner">
+        <a class="brand" href="/">Tarkov Codes</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <p class="kicker"><span class="sq"></span>Updated {updatedLabel}</p>
+          <h1>Promo Codes</h1>
+          <p class="sub">Free gear for Escape from Tarkov. Codes work in every mode unless marked PvE only.</p>
+        </div>
+        <div class="filters" role="group" aria-label="Show codes for" hidden>
+          {
+            modes.map((m) => (
+              <button class={`chip ${m}`} type="button" data-mode={m} aria-pressed="true" title={modeTitle[m]}>
+                <span class="box" aria-hidden="true"></span>
+                {modeLabel[m]}
+                <span class="n">{counts[m]}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <ol class="steps" aria-label="How to redeem">
+        <li><span class="num">1</span>Click a code to copy it</li>
+        <li><span class="num">2</span>Launcher <span class="arr">&rarr;</span> your name <span class="arr">&rarr;</span> <b>Activate code</b></li>
+        <li><span class="num">3</span>Not working? Update or reinstall the launcher</li>
+      </ol>
+
+      <ul class="grid">
+        {sorted.map((item, i) => <CodeCard item={item} eager={i < 3} />)}
+      </ul>
+      <p class="empty-msg" hidden>No codes for the modes you picked. Turn one back on above.</p>
+
+      <footer>Codes are case sensitive and often expire fast. Fan site, not affiliated with Battlestate Games.</footer>
+    </main>
+
+    <dialog class="viewer" aria-label="Reward screenshot"></dialog>
+    <div class="toast" role="status" aria-live="polite"></div>
+
+    <script is:inline>
+      (() => {
+        // Copy to clipboard
+        const toast = document.querySelector('.toast');
+        let t;
+        const copy = async (text) => {
+          try {
+            await navigator.clipboard.writeText(text);
+            return true;
+          } catch {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.cssText = 'position:fixed;opacity:0';
+            document.body.appendChild(ta);
+            ta.select();
+            const ok = document.execCommand('copy');
+            ta.remove();
+            return ok;
+          }
+        };
+
+        // Click-to-enlarge screenshots
+        // A fresh <img> per open, so the previous screenshot never shows. It starts
+        // with the card's already-loaded copy and swaps to full size once decoded.
+        const viewer = document.querySelector('.viewer');
+        viewer.addEventListener('click', () => viewer.close());
+        viewer.addEventListener('close', () => viewer.replaceChildren());
+
+        document.addEventListener('click', async (e) => {
+          const shot = e.target.closest('[data-full]');
+          if (shot) {
+            const thumb = shot.querySelector('img');
+            const img = new Image();
+            img.alt = thumb?.alt || '';
+            const w = Number(shot.dataset.w);
+            const h = Number(shot.dataset.h);
+            img.width = w;
+            img.height = h;
+            // Final size up front, so the swap to full size doesn't resize it.
+            img.style.width = `min(${w}px, 96vw - 2px, 1098px, (92vh - 2px) * ${w / h})`;
+            img.src = thumb?.currentSrc || shot.dataset.full;
+            viewer.replaceChildren(img);
+            viewer.showModal();
+            const full = new Image();
+            full.src = shot.dataset.full;
+            full
+              .decode()
+              .then(() => {
+                if (img.isConnected) img.src = full.src;
+              })
+              .catch(() => {});
+            return;
+          }
+          const btn = e.target.closest('[data-code]');
+          if (!btn) return;
+          const code = btn.dataset.code;
+          const ok = await copy(code);
+          btn.classList.toggle('copied', ok);
+          btn.querySelector('.copy-label').textContent = ok ? 'Copied' : 'Copy';
+          clearTimeout(btn._t);
+          btn._t = setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.querySelector('.copy-label').textContent = 'Copy';
+          }, 1600);
+          toast.textContent = ok ? code + ' copied' : 'Copy failed, select the code manually';
+          toast.classList.add('show');
+          clearTimeout(t);
+          t = setTimeout(() => toast.classList.remove('show'), 1600);
+        });
+
+        // Mode toggles: a card shows when any of its modes is switched on
+        const KEY = 'tc-modes';
+        const bar = document.querySelector('.filters');
+        const chips = [...bar.querySelectorAll('[data-mode]')];
+        const cards = [...document.querySelectorAll('.grid > li')];
+        const emptyMsg = document.querySelector('.empty-msg');
+        let off = [];
+        try {
+          off = JSON.parse(localStorage.getItem(KEY) || '[]');
+        } catch {}
+        // Never open on an empty page: a saved "everything off" starts fresh.
+        if (!Array.isArray(off) || chips.every((c) => off.includes(c.dataset.mode))) off = [];
+        const apply = () => {
+          let shown = 0;
+          for (const c of chips) c.setAttribute('aria-pressed', String(!off.includes(c.dataset.mode)));
+          for (const card of cards) {
+            const show = card.dataset.modes.split(' ').some((m) => !off.includes(m));
+            card.hidden = !show;
+            if (show) shown++;
+          }
+          emptyMsg.hidden = shown > 0;
+          try {
+            localStorage.setItem(KEY, JSON.stringify(off));
+          } catch {}
+        };
+        bar.addEventListener('click', (e) => {
+          const chip = e.target.closest('[data-mode]');
+          if (!chip) return;
+          const m = chip.dataset.mode;
+          off = off.includes(m) ? off.filter((x) => x !== m) : [...off, m];
+          apply();
+        });
+        bar.hidden = false;
+        apply();
+      })();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #131414;
+    --panel: #1b1c1c;
+    --panel-2: #171818;
+    --line: #2b2e2e;
+    --line-hi: #3a3e3e;
+    --text: #c2cdcd;
+    --bright: #e7eded;
+    --muted: #7f8989;
+    --teal: #6fd5b4;
+    --stash: #3d5559;
+    --ok: #93cf86;
+    --ok-bg: rgba(147, 207, 134, 0.1);
+    --bad: #e2685a;
+    --bad-bg: rgba(226, 104, 90, 0.1);
+    --metal: linear-gradient(#d6e4eb 0, #f2fbff 31%, #bfd3e9 100%);
+    --metal-ink: #1e416e;
+    --font: 'Saira Semi Condensed', 'Arial Narrow', system-ui, sans-serif;
+    --notch: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    --wrap: 1180px;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+  a {
+    color: inherit;
+  }
+
+  /* Top bar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(#272929, #1c1d1d);
+    border-bottom: 1px solid #0c0d0d;
+    box-shadow: 0 3px 6px var(--bg);
+  }
+  .bar-inner {
+    max-width: var(--wrap);
+    height: 46px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+  }
+  .brand {
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--bright);
+    text-shadow: 0 1px 0 #000;
+  }
+
+  main {
+    max-width: var(--wrap);
+    margin: 0 auto;
+    padding: 36px 16px 64px;
+  }
+
+  /* Hero + filters */
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 32px;
+    margin-bottom: 24px;
+  }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .sq {
+    width: 8px;
+    height: 8px;
+    background: var(--teal);
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: clamp(34px, 7vw, 48px);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--bright);
+  }
+  .sub {
+    margin: 0;
+    color: var(--muted);
+    max-width: 58ch;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    --c: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 10px;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 14%, #0f1010);
+    border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .chip .box {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    display: grid;
+    place-items: center;
+  }
+  .chip[aria-pressed='true'] .box::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+  }
+  .chip .n {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  .chip[aria-pressed='false'] {
+    color: var(--muted);
+    background: #0f1010;
+    border-color: var(--line-hi);
+    opacity: 0.6;
+  }
+  .chip[aria-pressed='false'] .n {
+    opacity: 0.5;
+  }
+  .chip:hover {
+    filter: brightness(1.15);
+  }
+  .chip:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+  .chip.pvp,
+  .mode.pvp {
+    --c: #e3a857;
+  }
+  .chip.pvps,
+  .mode.pvps {
+    --c: #b99cff;
+  }
+  .chip.pve,
+  .mode.pve {
+    --c: #6fd5b4;
+  }
+
+  /* How to redeem */
+  .steps {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .steps li {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    padding: 10px 14px;
+    background: linear-gradient(var(--panel), var(--panel-2));
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  .steps b {
+    font-weight: 700;
+    color: var(--bright);
+  }
+  .steps .num {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--metal);
+    color: var(--metal-ink);
+    clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  }
+  .steps .arr {
+    color: var(--muted);
+  }
+
+  /* Grid of cards */
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background: linear-gradient(var(--panel), var(--panel-2));
+    border: 1px solid var(--line);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+  .shot {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--stash);
+    background: #0a0b0b;
+    cursor: zoom-in;
+  }
+  .shot picture {
+    display: block;
+    height: 100%;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+    transition: filter 0.15s;
+  }
+  .shot:hover img {
+    filter: brightness(1.12);
+  }
+  .shot:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+  .shot.empty {
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px dashed var(--line-hi);
+    background: repeating-linear-gradient(-45deg, #141515 0 10px, #171818 10px 20px);
+    cursor: default;
+  }
+
+  .code {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 6px 6px 6px 12px;
+    background: #0f1010;
+    border: 1px solid var(--line);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s;
+  }
+  .code:hover {
+    border-color: var(--stash);
+  }
+  .code:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+  .code-text {
+    /* Mono with a dotted zero so 0/O and 8/B never get mixed up */
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--bright);
+    overflow-wrap: anywhere;
+  }
+  .card.dead .code-text {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: rgba(226, 104, 90, 0.7);
+  }
+
+  /* Metal press button, like the official site's */
+  .copy {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: var(--metal);
+    color: var(--metal-ink);
+    clip-path: var(--notch);
+    font-size: 16px;
+    line-height: 1.2;
+    transition: filter 0.15s;
+  }
+  .code:hover .copy {
+    filter: brightness(1.06);
+  }
+  .code:active .copy {
+    filter: brightness(0.92);
+  }
+  .copy svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .i-check,
+  .code.copied .i-copy {
+    display: none;
+  }
+  .code.copied .i-check {
+    display: block;
+  }
+  .code.copied .copy {
+    background: linear-gradient(#cfe8c8 0, #effcea 31%, #b5dcae 100%);
+    color: #24562a;
+  }
+  .code.copied {
+    border-color: rgba(147, 207, 134, 0.5);
+  }
+
+  /* Badges row */
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .modes {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .mode {
+    --c: var(--text);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    padding: 1px 9px 1px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 14%, transparent);
+    box-shadow: inset 3px 0 0 var(--c);
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+    white-space: nowrap;
+  }
+  .mode.all {
+    --c: #c2cdcd;
+  }
+  .only {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .tag {
+    flex: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1px 8px;
+    white-space: nowrap;
+    border: 1px solid currentColor;
+  }
+  .tag::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 7px;
+    background: currentColor;
+    vertical-align: 1px;
+  }
+  .tag.ok {
+    color: var(--ok);
+    background: var(--ok-bg);
+  }
+  .tag.bad {
+    color: var(--bad);
+    background: var(--bad-bg);
+  }
+
+  .info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 12px;
+    margin: 0 2px;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  .note {
+    color: var(--text);
+  }
+  .info time {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .empty-msg {
+    margin: 24px 0 0;
+    padding: 24px;
+    text-align: center;
+    color: var(--muted);
+    border: 1px dashed var(--line-hi);
+  }
+
+  footer {
+    margin-top: 48px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Enlarged screenshot */
+  .viewer {
+    max-width: min(96vw, 1100px);
+    max-height: 92vh;
+    padding: 0;
+    border: 1px solid var(--stash);
+    background: #0a0b0b;
+    cursor: zoom-out;
+  }
+  .viewer::backdrop {
+    background: rgba(5, 6, 6, 0.85);
+  }
+  .viewer img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(92vh - 2px);
+    width: auto;
+    height: auto;
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translate(-50%, 12px);
+    padding: 7px 16px;
+    background: var(--metal);
+    color: var(--metal-ink);
+    clip-path: var(--notch);
+    font-size: 16px;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  @media (max-width: 480px) {
+    main {
+      padding-top: 24px;
+    }
+    .copy-label {
+      display: none;
+    }
+    .copy {
+      padding: 7px 10px;
+    }
+    .code-text {
+      font-size: 15px;
+    }
+    .chip {
+      font-size: 15px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+</style>

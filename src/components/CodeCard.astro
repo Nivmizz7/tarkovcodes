@@ -1,0 +1,89 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import { modeLabel, modeTitle, modes as everyMode, type PromoCode } from '../codes';
+
+interface Props {
+  item: PromoCode;
+  eager?: boolean;
+}
+
+const { item, eager = false } = Astro.props;
+const working = item.status === 'working';
+const allModes = everyMode.every((m) => item.modes.includes(m));
+const single = item.modes.length === 1;
+const addedLabel = item.added
+  ? new Date(item.added + 'T00:00:00Z').toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+  : null;
+const reward = item.reward;
+// Never ask for a size bigger than the screenshot itself.
+const widths = reward ? [...[400, 760].filter((w) => w < reward.width), reward.width] : [];
+// Full-size copy for the click-to-enlarge view.
+const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
+---
+
+<li class:list={['card', { dead: !working }]} data-modes={item.modes.join(' ')}>
+  {
+    reward && full ? (
+      <button
+        class="shot"
+        type="button"
+        data-full={full.src}
+        data-w={reward.width}
+        data-h={reward.height}
+        aria-label={`Enlarge rewards for ${item.code}`}>
+        <Picture
+          src={reward}
+          formats={['avif', 'webp']}
+          widths={widths}
+          sizes="(max-width: 700px) calc(100vw - 54px), 360px"
+          alt={`Rewards for ${item.code}`}
+          loading={eager ? 'eager' : 'lazy'}
+          fetchpriority={eager ? 'high' : 'auto'}
+        />
+      </button>
+    ) : (
+      <div class="shot empty">No screenshot yet</div>
+    )
+  }
+
+  <button class="code" type="button" data-code={item.code} aria-label={`Copy ${item.code}`}>
+    <span class="code-text">{item.code}</span>
+    <span class="copy" aria-hidden="true">
+      <svg class="i-copy" viewBox="0 0 24 24" width="16" height="16"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+      <svg class="i-check" viewBox="0 0 24 24" width="16" height="16"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+      <span class="copy-label">Copy</span>
+    </span>
+  </button>
+
+  <div class="meta">
+    <span class="modes">
+      {
+        allModes ? (
+          <span class="mode all" title="Works in PvP, seasonal PvP and PvE">
+            All modes
+          </span>
+        ) : (
+          item.modes.map((m) => (
+            <span class={`mode ${m}`} title={single ? `${modeTitle[m]} only` : modeTitle[m]}>
+              {modeLabel[m]}
+              {single && <span class="only">only</span>}
+            </span>
+          ))
+        )
+      }
+    </span>
+    <span class:list={['tag', working ? 'ok' : 'bad']}>{working ? 'Working' : 'Not working'}</span>
+  </div>
+
+  {(item.note || addedLabel) && (
+    <p class="info">
+      {item.note && <span class="note">{item.note}</span>}
+      {addedLabel && <time datetime={item.added}>Added {addedLabel}</time>}
+    </p>
+  )}
+</li>
