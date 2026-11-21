@@ -45,7 +45,7 @@ export interface PromoCode {
   /** Date the code was posted, YYYY-MM-DD. Newest show first. */
   added?: string;
   /** Short line about what it gives or where it works. */
-  note?: string;
+  noteKey?: string;
   /** Screenshot of the stash showcase you get for this code. */
   reward?: ImageMetadata;
 }
@@ -61,14 +61,14 @@ export const codes: PromoCode[] = [
   // ---- Working ----
   { code: 'READ80LV', status: 'working', modes: ALL_MODES, added: '2026-11-17', reward: read80lv },
   { code: '1YEAROFESCAPING', status: 'expired', modes: ALL_MODES, added: '2026-11-15', reward: oneYearOfEscaping },
-  { code: 'PCGAMESN', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code', reward: pcgamesn },
-  { code: 'GAMESPARK', status: 'working', modes: ALL_MODES, added: '2026-08-03', note: 'Kord Breach season code', reward: gamespark },
+  { code: 'PCGAMESN', status: 'working', modes: ALL_MODES, added: '2026-08-03', noteKey: 'kordBreach', reward: pcgamesn },
+  { code: 'GAMESPARK', status: 'working', modes: ALL_MODES, added: '2026-08-03', noteKey: 'kordBreach', reward: gamespark },
   {
     code: 'UNDEADTARKOV',
     status: 'working',
     modes: ALL_MODES,
     added: '2026-10-30',
-    note: 'Meds to help with the Halloween quests',
+    noteKey: 'halloweenMeds',
     reward: undeadtarkov,
   },
   {
@@ -76,7 +76,7 @@ export const codes: PromoCode[] = [
     status: 'working',
     modes: ALL_MODES,
     added: '2026-11-05',
-    note: '"This will help you survive in Undead Tarkov"',
+    noteKey: 'halloweenQuote',
     reward: tarkovhalloween,
   },
   {
@@ -84,7 +84,7 @@ export const codes: PromoCode[] = [
     status: 'working',
     modes: ALL_MODES,
     added: '2026-11-06',
-    note: 'Injectors',
+    noteKey: 'injectors',
     reward: embracepain,
   },
   { code: 'INVEN', status: 'working', modes: PVE_ONLY, added: '2026-10-07', reward: inven },
@@ -94,7 +94,7 @@ export const codes: PromoCode[] = [
     status: 'working',
     modes: ALL_MODES,
     added: '2026-11-06',
-    note: 'Found-in-raid figurines, good for Prestige',
+    noteKey: 'prestigeFigurines',
     reward: playyourway,
   },
   { code: '9GAG', status: 'working', modes: PVE_ONLY, added: '2026-11-14', reward: ninegag },
@@ -106,14 +106,14 @@ export const codes: PromoCode[] = [
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-07-23',
-    note: '150 Tarcoins, first 20,000 players',
+    noteKey: 'tarcoins20k',
   },
   {
     code: 'LVL80BOSS',
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-07-27',
-    note: 'PKP, Pilgrim, ZSh with visor, LBCR, earbuds, Defender armour',
+    noteKey: 'lvl80Boss',
     reward: lvl80boss,
   },
   {
@@ -121,7 +121,7 @@ export const codes: PromoCode[] = [
     status: 'expired',
     modes: ['pvps'],
     added: '2026-08-02',
-    note: 'Season only, at the start of the season',
+    noteKey: 'seasonStart',
     reward: threedmgame,
   },
   {
@@ -129,29 +129,29 @@ export const codes: PromoCode[] = [
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-08-03',
-    note: 'Key tool and 9A-91 Tactical kit',
+    noteKey: 'keyToolKit',
     reward: keytool,
   },
-  { code: '6NU9-UFK1-W2TX-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
-  { code: '6NU9-W2TX-UFK1-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
-  { code: 'UFK1-6NU9-W2TX-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
-  { code: 'UFK1-W2TX-6NU9-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
-  { code: 'W2TX-UFK1-6NU9-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', note: 'Dogtag' },
+  { code: '6NU9-UFK1-W2TX-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', noteKey: 'dogtag' },
+  { code: '6NU9-W2TX-UFK1-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', noteKey: 'dogtag' },
+  { code: 'UFK1-6NU9-W2TX-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', noteKey: 'dogtag' },
+  { code: 'UFK1-W2TX-6NU9-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', noteKey: 'dogtag' },
+  { code: 'W2TX-UFK1-6NU9-89RW-M96B', status: 'expired', modes: ALL_MODES, added: '2026-08-03', noteKey: 'dogtag' },
   { code: 'WIPE', status: 'expired', modes: ALL_MODES, added: '2026-08-05', reward: wipe },
-  { code: 'PROMOCODE', status: 'expired', modes: ['pvp'], added: '2026-08-10', note: 'Roubles', reward: promocode },
+  { code: 'PROMOCODE', status: 'expired', modes: ['pvp'], added: '2026-08-10', noteKey: 'roubles', reward: promocode },
   {
     code: 'OMG150TARCOINS',
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-08-26',
-    note: '150 Tarcoins, first 30,000 players',
+    noteKey: 'tarcoins30k',
   },
   {
     code: 'SUDAKTUDAK',
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-09-09',
-    note: 'Sudak-Tudak kit, first 10,000 players',
+    noteKey: 'sudakTudak',
   },
   { code: 'YYSTV', status: 'expired', modes: PVE_ONLY, added: '2026-10-06', reward: yystv },
   { code: 'POLYGON', status: 'expired', modes: PVE_ONLY, added: '2026-10-06', reward: polygon },
@@ -161,6 +161,6 @@ export const codes: PromoCode[] = [
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-10-08',
-    note: '150 Tarcoins, first 40,000 players',
+    noteKey: 'tarcoins40k',
   },
 ];

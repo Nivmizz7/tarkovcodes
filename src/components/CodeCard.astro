@@ -1,6 +1,7 @@
 ---
 import { Picture, getImage } from 'astro:assets';
-import { modeLabel, modeTitle, modes as everyMode, type PromoCode } from '../codes';
+import { modes as everyMode, type Mode, type PromoCode } from '../codes';
+import en from '../i18n/en.json';
 
 interface Props {
   item: PromoCode;
@@ -20,6 +21,9 @@ const addedLabel = item.added
     })
   : null;
 const reward = item.reward;
+const note = item.noteKey ? en.codeNotes[item.noteKey as keyof typeof en.codeNotes] : null;
+const modeTitle = en.modeTitles as Record<Mode, string>;
+const modeLabel = en.modes as Record<Mode, string>;
 // Never ask for a size bigger than the screenshot itself.
 const widths = reward ? [...[400, 760].filter((w) => w < reward.width), reward.width] : [];
 // Full-size copy for the click-to-enlarge view.
@@ -35,28 +39,35 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
         data-full={full.src}
         data-w={reward.width}
         data-h={reward.height}
-        aria-label={`Enlarge rewards for ${item.code}`}>
+        aria-label={`${en.enlargeRewards} ${item.code}`}>
         <Picture
           src={reward}
           formats={['avif', 'webp']}
           widths={widths}
           sizes="(max-width: 700px) calc(100vw - 54px), 360px"
-          alt={`Rewards for ${item.code}`}
+          alt={`${en.rewards} ${item.code}`}
           loading={eager ? 'eager' : 'lazy'}
           fetchpriority={eager ? 'high' : 'auto'}
         />
       </button>
     ) : (
-      <div class="shot empty">{working ? 'No screenshot yet' : 'No screenshot'}</div>
+      <div class="shot empty">{working ? en.noScreenshotYet : en.noScreenshot}</div>
     )
   }
 
-  <button class="code" type="button" data-code={item.code} aria-label={`Copy ${item.code}`}>
+  <button
+    class="code"
+    type="button"
+    data-code={item.code}
+    data-copy-label={en.copy}
+    data-copied-label={en.copied}
+    aria-label={`${en.copyAria} ${item.code}`}
+  >
     <span class="code-text">{item.code}</span>
     <span class="copy" aria-hidden="true">
       <svg class="i-copy" viewBox="0 0 24 24" width="16" height="16"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
       <svg class="i-check" viewBox="0 0 24 24" width="16" height="16"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
-      <span class="copy-label">Copy</span>
+      <span class="copy-label">{en.copy}</span>
     </span>
   </button>
 
@@ -64,26 +75,26 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
     <span class="modes">
       {
         allModes ? (
-          <span class="mode all" title="Works in PvP, seasonal PvP and PvE">
-            All modes
+          <span class="mode all" title={en.allModesTitle} data-mode="all">
+            {en.allModes}
           </span>
         ) : (
           item.modes.map((m) => (
-            <span class={`mode ${m}`} title={single ? `${modeTitle[m]} only` : modeTitle[m]}>
+            <span class={`mode ${m}`} title={single ? `${modeTitle[m]} ${m === 'pve' ? en.only : ''}`.trim() : modeTitle[m]} data-mode={m}>
               {modeLabel[m]}
-              {single && <span class="only">only</span>}
+              {single && <span class="only">{en.only}</span>}
             </span>
           ))
         )
       }
     </span>
-    <span class:list={['tag', working ? 'ok' : 'bad']}>{working ? 'Working' : 'Expired'}</span>
+    <span class:list={['tag', working ? 'ok' : 'bad']} data-status={working ? 'working' : 'expired'}>{working ? en.working : en.expiredStatus}</span>
   </div>
 
-  {(item.note || addedLabel) && (
+  {(note || addedLabel) && (
     <p class="info">
-      {item.note && <span class="note">{item.note}</span>}
-      {addedLabel && <time datetime={item.added}>Added {addedLabel}</time>}
+      {note && <span class="note" data-note-key={item.noteKey}>{note}</span>}
+      {addedLabel && <time datetime={item.added} data-added={item.added}>{en.added} {addedLabel}</time>}
     </p>
   )}
 </li>

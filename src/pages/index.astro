@@ -3,7 +3,12 @@ import '@fontsource/saira-semi-condensed/latin-400.css';
 import '@fontsource/saira-semi-condensed/latin-700.css';
 import '@fontsource/jetbrains-mono/latin-700.css';
 import CodeCard from '../components/CodeCard.astro';
-import { codes, modes, modeLabel, updated } from '../codes';
+import { codes, modes, updated } from '../codes';
+import fr from '../i18n/fr.json';
+import en from '../i18n/en.json';
+import type { Mode } from '../codes';
+
+const modeLabel = en.modes as Record<Mode, string>;
 
 const updatedLabel = new Date(updated + 'T00:00:00Z').toLocaleDateString('en-GB', {
   day: 'numeric',
@@ -15,8 +20,7 @@ const repo = 'https://github.com/Wilsman/tarkovcodes';
 const discord = 'https://discord.gg/3dFmr5qaJK';
 const siteUrl = new URL('/', Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href;
-const description =
-  'Latest Escape from Tarkov promo codes for PvP, PvP-S and PvE, with one-click copy and the rewards you get.';
+const description = en.meta.description;
 
 // Newest first; codes without a date go last.
 const sorted = [...codes].sort((a, b) => (b.added ?? '').localeCompare(a.added ?? ''));
@@ -35,32 +39,40 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <title>Tarkov Promo Codes</title>
+    <title>{en.meta.title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={siteUrl} />
 
     <!-- Link preview: the in-game "Code activation" dialog with the site URL typed in -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Tarkov Codes" />
+    <meta property="og:site_name" content={en.brand} />
     <meta property="og:url" content={siteUrl} />
-    <meta property="og:title" content="Tarkov Promo Codes" />
+    <meta property="og:title" content={en.meta.title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Escape from Tarkov code activation dialog with tarkovcodes.pages.dev typed in and Code activated" />
+    <meta property="og:image:alt" content={en.meta.ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Tarkov Promo Codes" />
+    <meta name="twitter:title" content={en.meta.title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <header class="topbar">
       <div class="bar-inner">
-        <a class="brand" href="/">Tarkov Codes</a>
+        <a class="brand" href="/">{en.brand}</a>
+        <div class="language-picker" role="group" aria-label="Langue / Language">
+          <button type="button" class="locale" data-locale="fr" aria-label="Français" title="Français">
+            <img src="/flags/fr.svg" alt="" width="24" height="16" />
+          </button>
+          <button type="button" class="locale active" data-locale="en" aria-label="English" title="English">
+            <img src="/flags/en.svg" alt="" width="24" height="16" />
+          </button>
+        </div>
         <a class="suggest" href={`${repo}/issues/new/choose`} target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
-          Suggest a code
+          {en.suggestCode}
         </a>
       </div>
     </header>
@@ -68,24 +80,24 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
     <main>
       <div class="hero">
         <div>
-          <p class="kicker"><span class="sq"></span>Updated {updatedLabel}</p>
-          <h1>Promo Codes</h1>
-          <p class="sub">Free gear for Escape from Tarkov. Codes work in every mode unless marked PvE only.</p>
+          <p class="kicker" data-updated-date={updated}><span class="sq"></span>{en.updated} {updatedLabel}</p>
+          <h1>{en.heading}</h1>
+          <p class="sub">{en.subtitle}</p>
         </div>
         <fieldset class="picker" hidden>
-          <legend>I play</legend>
+          <legend>{en.play}</legend>
           <div class="seg">
-            <label class="opt all" title="Show every code">
+            <label class="opt all" title={en.showAllTitle}>
               <input type="radio" name="mode" value="all" checked />
-              <span><span class="dot" aria-hidden="true"></span>All <span class="n">{working.length}</span></span>
+              <span><span class="dot" aria-hidden="true"></span><span class="opt-label">{en.all}</span> <span class="n">{working.length}</span></span>
             </label>
             {
               modes.map((m) => (
-                <label class={`opt ${m}`} title={`Codes that work in ${modeLabel[m]}`}>
+                <label class={`opt ${m}`} data-mode-picker={m} title={`${en.working} in ${modeLabel[m]}`}>
                   <input type="radio" name="mode" value={m} />
                   <span>
                     <span class="dot" aria-hidden="true"></span>
-                    {modeLabel[m]} <span class="n">{counts[m]}</span>
+                    <span class="opt-label">{modeLabel[m]}</span> <span class="n">{counts[m]}</span>
                   </span>
                 </label>
               ))
@@ -94,29 +106,29 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
         </fieldset>
       </div>
 
-      <ol class="steps" aria-label="How to redeem">
-        <li><span class="num">1</span>Click a code to copy it</li>
-        <li><span class="num">2</span>Launcher <span class="arr">&rarr;</span> your name <span class="arr">&rarr;</span> <b>Activate code</b></li>
-        <li><span class="num">3</span>Not working? Update or reinstall the launcher</li>
+      <ol class="steps" aria-label={en.redeemAria}>
+        <li><span class="num">1</span>{en.redeem[0]}</li>
+        <li><span class="num">2</span>{en.redeem[1]} <span class="arr">&rarr;</span> {en.redeem[2]} <span class="arr">&rarr;</span> <b>{en.redeem[3]}</b></li>
+        <li><span class="num">3</span>{en.redeem[4]}</li>
       </ol>
 
       <ul class="grid">
         {working.map((item, i) => <CodeCard item={item} eager={i < 3} />)}
       </ul>
-      <p class="empty-msg" hidden>No working codes for this mode right now.</p>
+      <p class="empty-msg" hidden>{en.empty}</p>
 
       {
         expired.length > 0 && (
           <details class="expired">
             <summary>
-              <span class="exp-title">Expired codes</span>
+              <span class="exp-title">{en.expired}</span>
               <span class="exp-n">{expired.length}</span>
               <span class="exp-hint">
-                <span class="show">Show</span>
-                <span class="hide">Hide</span>
+                <span class="show">{en.show}</span>
+                <span class="hide">{en.hide}</span>
               </span>
             </summary>
-            <p class="exp-sub">These don't work any more. Kept so you can see what they gave.</p>
+            <p class="exp-sub">{en.expiredSubtitle}</p>
             <ul class="grid">
               {expired.map((item) => (
                 <CodeCard item={item} />
@@ -130,27 +142,136 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
         <div class="socials">
           <a class="social discord" href={discord} target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.028C.533 9.046-.319 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.042-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.011c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.01c.12.099.246.198.373.292a.077.077 0 0 1-.007.128c-.598.349-1.22.645-1.873.891a.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.029zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/></svg>
-            <span><b>Discord</b><small>Chat and code drops</small></span>
+            <span><b>Discord</b><small class="discord-subtitle">{en.discordSubtitle}</small></span>
           </a>
           <a class="social github" href={repo} target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-            <span><b>GitHub</b><small>Source and issues</small></span>
+            <span><b>GitHub</b><small class="github-subtitle">{en.githubSubtitle}</small></span>
           </a>
         </div>
         <p>
-          Got a new code, or one that stopped working?
-          <a href={`${repo}/issues/new/choose`} target="_blank" rel="noopener">Tell us on GitHub</a>. The site is
-          <a href={repo} target="_blank" rel="noopener">open source</a>.
+          <span class="footer-new-code">{en.footerNewCode}</span>
+          <a class="tell-us" href={`${repo}/issues/new/choose`} target="_blank" rel="noopener">{en.tellUs}</a>. <span class="site-is">{en.siteIs}</span>
+          <a class="open-source" href={repo} target="_blank" rel="noopener">{en.openSource}</a>.
         </p>
-        <p>Codes are case sensitive and often expire fast. Fan site, not affiliated with Battlestate Games.</p>
+        <p>{en.disclaimer}</p>
       </footer>
     </main>
 
-    <dialog class="viewer" aria-label="Reward screenshot"></dialog>
-    <div class="toast" role="status" aria-live="polite"></div>
+    <dialog class="viewer" aria-label={en.viewerAria}></dialog>
+    <div class="toast" role="status" aria-live="polite" data-copied-toast={en.copiedToast} data-copy-failed={en.copyFailed}></div>
 
-    <script is:inline>
+    <script is:inline define:vars={{ locales: { fr, en } }}>
       (() => {
+        const localeButtons = document.querySelectorAll('[data-locale]');
+        const applyLocale = (locale) => {
+          const t = Object.prototype.hasOwnProperty.call(locales, locale) ? locales[locale] : locales.en;
+          document.documentElement.lang = locale;
+          document.title = t.meta.title;
+          document.querySelector('meta[name="description"]')?.setAttribute('content', t.meta.description);
+          document.querySelector('meta[property="og:title"]')?.setAttribute('content', t.meta.title);
+          document.querySelector('meta[property="og:description"]')?.setAttribute('content', t.meta.description);
+          document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', t.meta.ogImageAlt);
+          document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', t.meta.title);
+          document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', t.meta.description);
+
+          document.querySelector('.suggest').lastChild.textContent = ' ' + t.suggestCode;
+          document.querySelector('.brand').textContent = t.brand;
+          const kicker = document.querySelector('.kicker');
+          const updatedDate = new Date(kicker.dataset.updatedDate + 'T00:00:00Z').toLocaleDateString(
+            locale === 'fr' ? 'fr-FR' : 'en-GB',
+            { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' },
+          );
+          kicker.lastChild.textContent = t.updated + ' ' + updatedDate;
+          document.querySelector('h1').textContent = t.heading;
+          document.querySelector('.sub').textContent = t.subtitle;
+          document.querySelector('.picker legend').textContent = t.play;
+          document.querySelector('.opt.all').title = t.showAllTitle;
+          document.querySelector('.opt.all .opt-label').textContent = t.all;
+          document.querySelectorAll('.opt[data-mode-picker]').forEach((el) => {
+            const mode = el.dataset.modePicker;
+            el.title = t.working + ' ' + (locale === 'fr' ? 'en' : 'in') + ' ' + t.modes[mode];
+            el.querySelector('.opt-label').textContent = t.modes[mode];
+          });
+          document.querySelector('.steps').setAttribute('aria-label', t.redeemAria);
+          document.querySelectorAll('.steps li').forEach((li, i) => {
+            if (i === 0) li.lastChild.textContent = t.redeem[0];
+            if (i === 1) {
+              li.childNodes[1].textContent = t.redeem[1] + ' ';
+              li.childNodes[3].textContent = ' ' + t.redeem[2] + ' ';
+              li.querySelector('b').textContent = t.redeem[3];
+            }
+            if (i === 2) li.lastChild.textContent = t.redeem[4];
+          });
+          document.querySelector('.empty-msg').textContent = t.empty;
+          document.querySelector('.exp-title')?.replaceChildren(t.expired);
+          document.querySelector('.exp-sub')?.replaceChildren(t.expiredSubtitle);
+          document.querySelector('.show')?.replaceChildren(t.show);
+          document.querySelector('.hide')?.replaceChildren(t.hide);
+          document.querySelector('.footer-new-code').textContent = t.footerNewCode;
+          document.querySelector('.tell-us').textContent = t.tellUs;
+          document.querySelector('.open-source').textContent = t.openSource;
+          document.querySelector('.site-is').textContent = t.siteIs;
+          document.querySelector('footer > p:last-of-type').textContent = t.disclaimer;
+          document.querySelector('.discord-subtitle').textContent = t.discordSubtitle;
+          document.querySelector('.github-subtitle').textContent = t.githubSubtitle;
+          document.querySelector('.viewer').setAttribute('aria-label', t.viewerAria);
+
+          document.querySelectorAll('.mode.all').forEach((el) => {
+            el.title = t.allModesTitle;
+            el.textContent = t.allModes;
+          });
+          document.querySelectorAll('.mode[data-mode]').forEach((el) => {
+            const mode = el.dataset.mode;
+            if (mode === 'all') return;
+            el.title = el.querySelector('.only') ? t.modeTitles[mode] + ' ' + t.only : t.modeTitles[mode];
+          });
+          document.querySelectorAll('[data-status]').forEach((el) => {
+            el.textContent = el.dataset.status === 'working' ? t.working : t.expiredStatus;
+          });
+          document.querySelectorAll('.copy-label').forEach((el) => {
+            el.textContent = el.closest('.code')?.classList.contains('copied') ? t.copied : t.copy;
+          });
+          document.querySelectorAll('.code').forEach((el) => {
+            el.dataset.copyLabel = t.copy;
+            el.dataset.copiedLabel = t.copied;
+            el.setAttribute('aria-label', t.copyAria + ' ' + el.dataset.code);
+          });
+          document.querySelectorAll('.shot').forEach((el) => {
+            el.setAttribute('aria-label', t.enlargeRewards + ' ' + el.closest('li').querySelector('[data-code]').dataset.code);
+            const img = el.querySelector('img');
+            if (img) img.alt = t.rewards + ' ' + el.closest('li').querySelector('[data-code]').dataset.code;
+          });
+          document.querySelectorAll('.shot.empty').forEach((el) => {
+            el.textContent = el.closest('li').classList.contains('dead') ? t.noScreenshot : t.noScreenshotYet;
+          });
+          document.querySelectorAll('[data-note-key]').forEach((el) => {
+            el.textContent = t.codeNotes[el.dataset.noteKey];
+          });
+          document.querySelectorAll('time[data-added]').forEach((el) => {
+            el.textContent = t.added + ' ' + new Date(el.dataset.added + 'T00:00:00Z').toLocaleDateString(
+              locale === 'fr' ? 'fr-FR' : 'en-GB',
+              { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' },
+            );
+          });
+
+          const toast = document.querySelector('.toast');
+          toast.dataset.copiedToast = t.copiedToast;
+          toast.dataset.copyFailed = t.copyFailed;
+          localeButtons.forEach((button) => button.classList.toggle('active', button.dataset.locale === locale));
+          try { localStorage.setItem('tc-language', locale); } catch {}
+        };
+
+        let initialLocale = 'en';
+        try {
+          const savedLocale = localStorage.getItem('tc-language');
+          initialLocale = savedLocale && Object.prototype.hasOwnProperty.call(locales, savedLocale)
+            ? savedLocale
+            : 'en';
+        } catch {}
+        localeButtons.forEach((button) => button.addEventListener('click', () => applyLocale(button.dataset.locale)));
+        applyLocale(initialLocale);
+
         // Copy to clipboard
         const toast = document.querySelector('.toast');
         let t;
@@ -208,13 +329,13 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
           const code = btn.dataset.code;
           const ok = await copy(code);
           btn.classList.toggle('copied', ok);
-          btn.querySelector('.copy-label').textContent = ok ? 'Copied' : 'Copy';
+          btn.querySelector('.copy-label').textContent = ok ? btn.dataset.copiedLabel : btn.dataset.copyLabel;
           clearTimeout(btn._t);
           btn._t = setTimeout(() => {
             btn.classList.remove('copied');
-            btn.querySelector('.copy-label').textContent = 'Copy';
+            btn.querySelector('.copy-label').textContent = btn.dataset.copyLabel;
           }, 1600);
-          toast.textContent = ok ? code + ' copied' : 'Copy failed, select the code manually';
+          toast.textContent = ok ? code + ' ' + toast.dataset.copiedToast : toast.dataset.copyFailed;
           toast.classList.add('show');
           clearTimeout(t);
           t = setTimeout(() => toast.classList.remove('show'), 1600);
@@ -862,6 +983,38 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
   footer a:hover {
     color: var(--bright);
   }
+  .language-picker {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: 18px;
+  }
+  .locale {
+    width: 34px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .locale img {
+    display: block;
+    margin: auto;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+  .locale:hover,
+  .locale.active {
+    border-color: var(--line-hi);
+    background: var(--panel);
+  }
+  .locale:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
   .socials {
     display: flex;
     flex-wrap: wrap;
@@ -990,6 +1143,9 @@ const counts = Object.fromEntries(modes.map((m) => [m, working.filter((c) => c.m
       padding: 7px 4px;
       gap: 5px;
       font-size: 15px;
+    }
+    .language-picker {
+      margin-left: 10px;
     }
   }
   @media (prefers-reduced-motion: reduce) {
