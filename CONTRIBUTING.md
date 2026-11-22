@@ -37,4 +37,11 @@ npm run dev
 
 Open http://localhost:4321 and check the card looks right, copy works, and the "I play" picker shows it under the right modes. `npm run build` should finish without errors.
 
-Keep pull requests small, one topic each. Deploys to the live site are done by the maintainer.
+Keep pull requests small, one topic each.
+
+## Deploys
+
+Cloudflare Pages builds the site straight from this repo:
+
+- **Pull requests** from a branch in this repo get a preview build, and Cloudflare comments the preview link on the PR. Pull requests from forks don't get a preview.
+- **Merging into `main`** deploys to the live site.
