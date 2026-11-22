@@ -60,21 +60,6 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
     )
   }
 
-  {
-    working && (
-      <button
-        type="button"
-        class="redeem-toggle"
-        aria-pressed="false"
-        aria-label={t.redeemed}
-        title={t.redeemedTitle}
-        data-i18n-aria="redeemed"
-        data-i18n-title="redeemedTitle">
-        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
-      </button>
-    )
-  }
-
   <button
     class="code"
     type="button"
@@ -111,6 +96,17 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
     <span class="tags">
       {working && <span class="tag new" hidden data-i18n="new">{t.new}</span>}
       <span class:list={['tag', working ? 'ok' : 'bad']} data-status={working ? 'working' : 'expired'}>{working ? t.working : t.expiredStatus}</span>
+      {working && (
+        <button
+          type="button"
+          class="redeem-toggle"
+          aria-pressed="false"
+          title={t.redeemedTitle}
+          data-i18n-title="redeemedTitle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          <span data-i18n="redeemed">{t.redeemed}</span>
+        </button>
+      )}
     </span>
   </div>
 

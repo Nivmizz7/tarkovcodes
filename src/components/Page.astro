@@ -468,27 +468,23 @@ const contribTitle = (login: string, n: number) =>
         try {
           JSON.parse(localStorage.getItem('tc-redeemed') || '[]').forEach((c) => redeemed.add(c));
         } catch {}
-        const saveRedeemed = () => {
+        const setRedeemed = (card, on) => {
+          card.classList.toggle('redeemed', on);
+          card.querySelector('.redeem-toggle')?.setAttribute('aria-pressed', String(on));
+          if (on) redeemed.add(card.id);
+          else redeemed.delete(card.id);
           try {
             localStorage.setItem('tc-redeemed', JSON.stringify([...redeemed]));
           } catch {}
         };
         document.querySelectorAll('li.card').forEach((card) => {
-          if (!redeemed.has(card.id)) return;
-          card.classList.add('redeemed');
-          card.querySelector('.redeem-toggle')?.setAttribute('aria-pressed', 'true');
+          if (redeemed.has(card.id)) setRedeemed(card, true);
         });
 
         document.addEventListener('click', async (e) => {
           const redeemBtn = e.target.closest('.redeem-toggle');
           if (redeemBtn) {
-            const card = redeemBtn.closest('li.card');
-            const on = redeemBtn.getAttribute('aria-pressed') !== 'true';
-            redeemBtn.setAttribute('aria-pressed', String(on));
-            card.classList.toggle('redeemed', on);
-            if (on) redeemed.add(card.id);
-            else redeemed.delete(card.id);
-            saveRedeemed();
+            setRedeemed(redeemBtn.closest('li.card'), redeemBtn.getAttribute('aria-pressed') !== 'true');
             return;
           }
           const shot = e.target.closest('[data-full]');
@@ -519,6 +515,10 @@ const contribTitle = (login: string, n: number) =>
           if (!btn) return;
           const code = btn.dataset.code;
           const ok = await copy(code);
+          if (ok) {
+            const card = btn.closest('li.card');
+            if (card?.querySelector('.redeem-toggle')) setRedeemed(card, true);
+          }
           btn.classList.toggle('copied', ok);
           btn.querySelector('.copy-label').textContent = ok ? btn.dataset.copiedLabel : btn.dataset.copyLabel;
           clearTimeout(btn._t);
@@ -891,7 +891,6 @@ const contribTitle = (login: string, n: number) =>
     gap: 12px;
   }
   .card {
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -945,43 +944,6 @@ const contribTitle = (login: string, n: number) =>
     cursor: default;
   }
 
-  /* "Redeemed" tick, overlaid on the screenshot's top-right corner */
-  .redeem-toggle {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 1;
-    display: inline-grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    border: 1px solid var(--line-hi);
-    background: rgba(15, 16, 16, 0.85);
-    color: var(--muted);
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s, background-color 0.15s;
-  }
-  .redeem-toggle:hover {
-    color: var(--bright);
-    border-color: var(--stash);
-  }
-  .redeem-toggle:focus-visible {
-    outline: 2px solid var(--teal);
-    outline-offset: 2px;
-  }
-  .redeem-toggle[aria-pressed='true'] {
-    color: var(--ok);
-    background: rgba(147, 207, 134, 0.22);
-    border-color: rgba(147, 207, 134, 0.6);
-  }
-  .redeem-toggle svg {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
   .card.redeemed {
     opacity: 0.55;
   }
@@ -1074,9 +1036,10 @@ const contribTitle = (login: string, n: number) =>
   /* Badges row */
   .meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px 8px;
   }
   .modes {
     display: inline-flex;
@@ -1111,6 +1074,8 @@ const contribTitle = (login: string, n: number) =>
   .tags {
     flex: none;
     display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 6px;
   }
   .tag {
@@ -1143,6 +1108,47 @@ const contribTitle = (login: string, n: number) =>
   .tag.new {
     color: var(--teal);
     background: rgba(111, 213, 180, 0.1);
+  }
+  /* "Redeemed" toggle sits with the tags; dashed until pressed */
+  .redeem-toggle {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    padding: 1px 8px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--muted);
+    background: transparent;
+    border: 1px dashed var(--line-hi);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+  }
+  .redeem-toggle svg {
+    width: 10px;
+    height: 10px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .redeem-toggle:hover {
+    color: var(--text);
+    border-color: var(--stash);
+  }
+  .redeem-toggle:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+  .redeem-toggle[aria-pressed='true'] {
+    color: var(--ok);
+    background: var(--ok-bg);
+    border: 1px solid rgba(147, 207, 134, 0.6);
   }
 
   .info {
