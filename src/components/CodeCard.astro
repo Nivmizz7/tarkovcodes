@@ -96,6 +96,14 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
     <span class="tags">
       {working && <span class="tag new" hidden data-i18n="new">{t.new}</span>}
       <span class:list={['tag', working ? 'ok' : 'bad']} data-status={working ? 'working' : 'expired'}>{working ? t.working : t.expiredStatus}</span>
+    </span>
+  </div>
+
+  {(note || addedLabel || expiredLabel || working) && (
+    <div class="info">
+      {note && <span class="note" data-note-key={item.noteKey}>{note}</span>}
+      {addedLabel && <time datetime={item.added} data-added={item.added}>{t.added} {addedLabel}</time>}
+      {expiredLabel && <time datetime={item.expired} data-expired={item.expired}>{t.expiredStatus} {expiredLabel}</time>}
       {working && (
         <button
           type="button"
@@ -103,18 +111,12 @@ const full = reward ? await getImage({ src: reward, format: 'webp' }) : null;
           aria-pressed="false"
           title={t.redeemedTitle}
           data-i18n-title="redeemedTitle">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          <span class="box" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          </span>
           <span data-i18n="redeemed">{t.redeemed}</span>
         </button>
       )}
-    </span>
-  </div>
-
-  {(note || addedLabel || expiredLabel) && (
-    <p class="info">
-      {note && <span class="note" data-note-key={item.noteKey}>{note}</span>}
-      {addedLabel && <time datetime={item.added} data-added={item.added}>{t.added} {addedLabel}</time>}
-      {expiredLabel && <time datetime={item.expired} data-expired={item.expired}>{t.expiredStatus} {expiredLabel}</time>}
-    </p>
+    </div>
   )}
 </li>

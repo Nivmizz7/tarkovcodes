@@ -1109,52 +1109,72 @@ const contribTitle = (login: string, n: number) =>
     color: var(--teal);
     background: rgba(111, 213, 180, 0.1);
   }
-  /* "Redeemed" toggle sits with the tags; dashed until pressed */
+  /* "Redeemed" checkbox sits at the end of the footer row, away from the status tags */
   .redeem-toggle {
+    margin-left: auto;
     display: inline-flex;
-    align-items: baseline;
-    gap: 5px;
-    padding: 1px 8px;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 0;
     font: inherit;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 13px;
     letter-spacing: 0.08em;
-    line-height: 1.5;
     text-transform: uppercase;
     white-space: nowrap;
     color: var(--muted);
-    background: transparent;
-    border: 1px dashed var(--line-hi);
+    background: none;
+    border: 0;
     cursor: pointer;
-    transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+    transition: color 0.15s;
+  }
+  .redeem-toggle .box {
+    display: grid;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--line-hi);
+    background: #0f1010;
+    transition: border-color 0.15s, background-color 0.15s;
   }
   .redeem-toggle svg {
     width: 10px;
     height: 10px;
     fill: none;
     stroke: currentColor;
-    stroke-width: 3;
+    stroke-width: 3.2;
     stroke-linecap: round;
     stroke-linejoin: round;
+    opacity: 0;
   }
   .redeem-toggle:hover {
     color: var(--text);
+  }
+  .redeem-toggle:hover .box {
     border-color: var(--stash);
+  }
+  .redeem-toggle:hover svg {
+    opacity: 0.35;
   }
   .redeem-toggle:focus-visible {
     outline: 2px solid var(--teal);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
   .redeem-toggle[aria-pressed='true'] {
     color: var(--ok);
-    background: var(--ok-bg);
-    border: 1px solid rgba(147, 207, 134, 0.6);
+  }
+  .redeem-toggle[aria-pressed='true'] .box {
+    border-color: var(--ok);
+    background: var(--ok);
+    color: #0f1010;
+  }
+  .redeem-toggle[aria-pressed='true'] svg {
+    opacity: 1;
   }
 
   .info {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     gap: 2px 12px;
     margin: 0 2px;
     font-size: 15px;
