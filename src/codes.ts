@@ -39,14 +39,13 @@ export interface PromoCode {
   modes: Mode[];
   /** Date the code was posted, YYYY-MM-DD. Newest show first. */
   added?: string;
+  /** Date the code stopped working, YYYY-MM-DD. Only set on expired codes. */
+  expired?: string;
   /** Short line about what it gives or where it works: a key from `codeNotes` in src/i18n/en.json and fr.json. */
   noteKey?: keyof typeof en.codeNotes;
   /** Screenshot of the stash showcase you get for this code. */
   reward?: ImageMetadata;
 }
-
-// Shown at the top of the page. Bump it when you change the list.
-export const updated = '2026-11-21';
 
 // To add a reward: put the screenshot in src/assets/rewards/, import it above,
 // and set `reward` on the code. To retire a code: set status to 'expired' and
@@ -61,12 +60,20 @@ export const codes: PromoCode[] = [
   { code: '9GAG', status: 'working', modes: PVE_ONLY, added: '2026-11-14', reward: ninegag },
 
   // ---- Expired ----
-  { code: '1YEAROFESCAPING', status: 'expired', modes: ALL_MODES, added: '2026-11-15', reward: oneYearOfEscaping },
+  {
+    code: '1YEAROFESCAPING',
+    status: 'expired',
+    modes: ALL_MODES,
+    added: '2026-11-15',
+    expired: '2026-11-21',
+    reward: oneYearOfEscaping,
+  },
   {
     code: 'EMBRACEPAIN',
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-11-06',
+    expired: '2026-11-21',
     noteKey: 'injectors',
     reward: embracepain,
   },
@@ -75,6 +82,7 @@ export const codes: PromoCode[] = [
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-11-06',
+    expired: '2026-11-21',
     noteKey: 'prestigeFigurines',
     reward: playyourway,
   },
@@ -83,6 +91,7 @@ export const codes: PromoCode[] = [
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-11-05',
+    expired: '2026-11-21',
     noteKey: 'halloweenQuote',
     reward: tarkovhalloween,
   },
@@ -91,10 +100,18 @@ export const codes: PromoCode[] = [
     status: 'expired',
     modes: ALL_MODES,
     added: '2026-10-30',
+    expired: '2026-11-21',
     noteKey: 'halloweenMeds',
     reward: undeadtarkov,
   },
-  { code: 'PVEPRESTIGE', status: 'expired', modes: PVE_ONLY, added: '2026-10-08', reward: pveprestige },
+  {
+    code: 'PVEPRESTIGE',
+    status: 'expired',
+    modes: PVE_ONLY,
+    added: '2026-10-08',
+    expired: '2026-11-21',
+    reward: pveprestige,
+  },
   { code: 'LVL1SCAV', status: 'expired', modes: ALL_MODES, added: '2026-07-19', reward: lvl1scav },
   {
     code: 'FREETARCOINS',
@@ -159,3 +176,12 @@ export const codes: PromoCode[] = [
     noteKey: 'tarcoins40k',
   },
 ];
+
+// Shown at the top of the page and used for sitemap.xml's lastmod. Derived from
+// the newest added/expired date, so it moves with the list on its own.
+export const updated =
+  codes
+    .flatMap((c) => [c.added, c.expired])
+    .filter((d): d is string => Boolean(d))
+    .sort()
+    .at(-1) ?? '';

@@ -24,9 +24,9 @@ When adding a new `noteKey`, add the English text to `src/i18n/en.json` and the 
 
 **Add a reward screenshot:** crop it to the in-game "Showcase" window, save it as a PNG in `src/assets/rewards/` named after the code, import it at the top of `codes.ts` and set `reward` on the code.
 
-**Mark a code as expired:** change its `status` to `'expired'`. It moves to the expired section at the bottom.
+**Mark a code as expired:** change its `status` to `'expired'` and set `expired` to the date it stopped working. It moves to the expired section at the bottom.
 
-**Bump `updated`** near the top of the file to today's date so the page shows when the list last changed.
+The "Updated" date at the top of the page is derived from the newest `added`/`expired` date, so there's nothing to bump by hand.
 
 ## Running and checking
 
