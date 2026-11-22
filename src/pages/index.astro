@@ -18,7 +18,13 @@ const updatedLabel = new Date(updated + 'T00:00:00Z').toLocaleDateString('en-GB'
   timeZone: 'UTC',
 });
 const repo = 'https://github.com/Wilsman/tarkovcodes';
+const issuesUrl = `${repo}/issues/new/choose`;
 const discord = 'https://discord.gg/3dFmr5qaJK';
+const discordSuggest = 'https://discord.gg/BZHwJXbvAQ';
+const discordIconPath =
+  'M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.028C.533 9.046-.319 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.042-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.011c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.01c.12.099.246.198.373.292a.077.077 0 0 1-.007.128c-.598.349-1.22.645-1.873.891a.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.029zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z';
+const githubIconPath =
+  'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12';
 const siteUrl = new URL('/', Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href;
 const description = en.meta.description;
@@ -75,10 +81,10 @@ const contribTitle = (login: string, n: number) =>
             <img src="/flags/en.svg" alt="" width="24" height="16" />
           </button>
         </div>
-        <a class="suggest" href={`${repo}/issues/new/choose`} target="_blank" rel="noopener">
+        <button type="button" class="suggest" aria-haspopup="dialog">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
           <span class="suggest-label">{en.suggestCode}</span>
-        </a>
+        </button>
       </div>
     </header>
 
@@ -170,23 +176,75 @@ const contribTitle = (login: string, n: number) =>
           }
           <nav class="foot-links">
             <a class="discord-link" href={discord} target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.028C.533 9.046-.319 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.042-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.011c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.01c.12.099.246.198.373.292a.077.077 0 0 1-.007.128c-.598.349-1.22.645-1.873.891a.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.029zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={discordIconPath}/></svg>
               Discord
             </a>
             <a href={repo} target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={githubIconPath}/></svg>
               GitHub
             </a>
           </nav>
         </div>
         <p class="foot-line">
           <span class="footer-new-code">{en.footerNewCode}</span>{' '}
-          <a class="tell-us" href={`${repo}/issues/new/choose`} target="_blank" rel="noopener">{en.tellUs}</a>. <span class="site-is">{en.siteIs}</span>{' '}
+          <span class="tell-us-prefix">{en.tellUsPrefix}</span>{' '}
+          <a class="tell-discord" href={discordSuggest} target="_blank" rel="noopener">Discord</a>{' '}
+          <span class="tell-us-or">{en.or}</span>{' '}
+          <a class="tell-github" href={issuesUrl} target="_blank" rel="noopener">GitHub</a>. <span class="site-is">{en.siteIs}</span>{' '}
           <a class="open-source" href={repo} target="_blank" rel="noopener">{en.openSource}</a>.
         </p>
         <p class="foot-line dim">{en.disclaimer}</p>
       </footer>
     </main>
+
+    <dialog class="suggest-dialog" aria-labelledby="suggest-title">
+      <div class="suggest-panel">
+        <div class="suggest-head">
+          <div>
+            <h2 id="suggest-title">{en.suggestDialog.title}</h2>
+            <p class="suggest-sub">{en.suggestDialog.subtitle}</p>
+          </div>
+          <button
+            type="button"
+            class="suggest-close"
+            aria-label={en.suggestDialog.close}
+            title={en.suggestDialog.close}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="suggest-options">
+          <a class="suggest-opt discord" href={discordSuggest} target="_blank" rel="noopener">
+            <span class="suggest-opt-head">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={discordIconPath}/></svg>
+              <strong class="suggest-opt-title">{en.suggestDialog.discordTitle}</strong>
+            </span>
+            <p class="suggest-opt-desc">{en.suggestDialog.discordDesc}</p>
+            <span class="suggest-btn">
+              <span class="suggest-btn-label">{en.suggestDialog.discordAction}</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                <path d="M14 5h5v5M10 14L19 5M19 13v6H5V5h6"></path>
+              </svg>
+            </span>
+          </a>
+          <a class="suggest-opt github" href={issuesUrl} target="_blank" rel="noopener">
+            <span class="suggest-opt-head">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d={githubIconPath}/></svg>
+              <strong class="suggest-opt-title">{en.suggestDialog.githubTitle}</strong>
+            </span>
+            <p class="suggest-opt-desc">{en.suggestDialog.githubDesc}</p>
+            <span class="suggest-btn">
+              <span class="suggest-btn-label">{en.suggestDialog.githubAction}</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                <path d="M14 5h5v5M10 14L19 5M19 13v6H5V5h6"></path>
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </dialog>
 
     <dialog class="viewer" aria-label={en.viewerAria}></dialog>
     <div class="toast" role="status" aria-live="polite" data-copied-toast={en.copiedToast} data-copy-failed={en.copyFailed}></div>
@@ -231,10 +289,22 @@ const contribTitle = (login: string, n: number) =>
           document.querySelector('.show')?.replaceChildren(t.show);
           document.querySelector('.hide')?.replaceChildren(t.hide);
           document.querySelector('.footer-new-code').textContent = t.footerNewCode;
-          document.querySelector('.tell-us').textContent = t.tellUs;
+          document.querySelector('.tell-us-prefix').textContent = t.tellUsPrefix;
+          document.querySelector('.tell-us-or').textContent = t.or;
           document.querySelector('.open-source').textContent = t.openSource;
           document.querySelector('.site-is').textContent = t.siteIs;
           document.querySelector('.foot-line.dim').textContent = t.disclaimer;
+          document.querySelector('#suggest-title').textContent = t.suggestDialog.title;
+          document.querySelector('.suggest-sub').textContent = t.suggestDialog.subtitle;
+          const suggestCloseBtn = document.querySelector('.suggest-close');
+          suggestCloseBtn.setAttribute('aria-label', t.suggestDialog.close);
+          suggestCloseBtn.title = t.suggestDialog.close;
+          document.querySelector('.suggest-opt.discord .suggest-opt-title').textContent = t.suggestDialog.discordTitle;
+          document.querySelector('.suggest-opt.discord .suggest-opt-desc').textContent = t.suggestDialog.discordDesc;
+          document.querySelector('.suggest-opt.discord .suggest-btn-label').textContent = t.suggestDialog.discordAction;
+          document.querySelector('.suggest-opt.github .suggest-opt-title').textContent = t.suggestDialog.githubTitle;
+          document.querySelector('.suggest-opt.github .suggest-opt-desc').textContent = t.suggestDialog.githubDesc;
+          document.querySelector('.suggest-opt.github .suggest-btn-label').textContent = t.suggestDialog.githubAction;
           const avatarLinks = document.querySelectorAll('.avatars a');
           document
             .querySelector('.contrib-word')
@@ -326,6 +396,17 @@ const contribTitle = (login: string, n: number) =>
             return ok;
           }
         };
+
+        // Suggest / edit code dialog
+        const suggestDialog = document.querySelector('.suggest-dialog');
+        document.querySelector('.suggest').addEventListener('click', () => suggestDialog.showModal());
+        suggestDialog.querySelector('.suggest-close').addEventListener('click', () => suggestDialog.close());
+        suggestDialog.addEventListener('click', (e) => {
+          if (e.target === suggestDialog) suggestDialog.close();
+        });
+        suggestDialog.querySelectorAll('.suggest-opt').forEach((link) => {
+          link.addEventListener('click', () => suggestDialog.close());
+        });
 
         // Click-to-enlarge screenshots
         // A fresh <img> per open, so the previous screenshot never shows. It starts
@@ -488,6 +569,8 @@ const contribTitle = (login: string, n: number) =>
     align-items: center;
     gap: 6px;
     padding: 4px 12px 4px 9px;
+    border: 0;
+    font: inherit;
     font-size: 15px;
     font-weight: 700;
     text-decoration: none;
@@ -495,6 +578,7 @@ const contribTitle = (login: string, n: number) =>
     background: var(--metal);
     clip-path: var(--notch);
     white-space: nowrap;
+    cursor: pointer;
   }
   .suggest:hover {
     filter: brightness(1.06);
@@ -1129,6 +1213,158 @@ const contribTitle = (login: string, n: number) =>
     }
     .avatars a:hover {
       transform: none;
+    }
+  }
+
+  /* Suggest / edit code dialog */
+  .suggest-dialog {
+    width: min(560px, calc(100vw - 24px));
+    padding: 0;
+    border: 1px solid var(--line-hi);
+    background: linear-gradient(var(--panel), var(--panel-2));
+    color: var(--text);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .suggest-dialog::backdrop {
+    background: rgba(5, 6, 6, 0.82);
+    backdrop-filter: blur(2px);
+  }
+  .suggest-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px 15px;
+    border-bottom: 1px solid var(--line);
+  }
+  .suggest-head h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    color: var(--bright);
+  }
+  .suggest-sub {
+    margin: 4px 0 0;
+    font-size: 15px;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+  .suggest-close {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    margin: -2px -4px 0 0;
+    padding: 0;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+  }
+  .suggest-close:hover {
+    color: var(--bright);
+    border-color: var(--line-hi);
+    background: #0f1010;
+  }
+  .suggest-close:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+  .suggest-close svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+  .suggest-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 18px 20px 20px;
+  }
+  .suggest-opt {
+    --c: var(--bright);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    background: #0f1010;
+    border: 1px solid var(--line);
+    box-shadow: inset 3px 0 0 var(--c);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+  .suggest-opt.discord {
+    --c: #7c87ff;
+  }
+  .suggest-opt:hover {
+    border-color: color-mix(in srgb, var(--c) 55%, var(--line));
+    background: #141616;
+  }
+  .suggest-opt:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+  .suggest-opt-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .suggest-opt-head svg {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    fill: var(--c);
+  }
+  .suggest-opt-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--bright);
+  }
+  .suggest-opt-desc {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .suggest-btn {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--metal-ink);
+    background: var(--metal);
+    clip-path: var(--notch);
+    transition: filter 0.15s;
+  }
+  .suggest-btn svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .suggest-opt:hover .suggest-btn {
+    filter: brightness(1.06);
+  }
+  .suggest-opt:active .suggest-btn {
+    filter: brightness(0.92);
+  }
+  @media (max-width: 520px) {
+    .suggest-options {
+      grid-template-columns: 1fr;
     }
   }
 
